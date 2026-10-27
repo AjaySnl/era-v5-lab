@@ -110,10 +110,17 @@ The budget covers the think span and the tool trace. It does not cover the visib
 - **Pack / Language / Source:** *(to be added by Lokesh Arundathi via PR)*
 - **Dataset markers:** *(to be added by Lokesh Arundathi via PR; deduplicated into consolidated list on merge)*
 
-### 8. Rammohan Madhusudan — Dataset section *(placeholder for PR to `g10-week1-post-training`)*
+### 8. Rammohan Madhusudan — Indic web (`ind-hi-hplt` · HPLT 3.0 `hin_Deva`)
 
-- **Pack / Language / Source:** *(to be added by Rammohan Madhusudan via PR)*
-- **Dataset markers:** *(to be added by Rammohan Madhusudan via PR; deduplicated into consolidated list on merge)*
+- **Pack / Language / Source:** `ind-hi-hplt` / `Hindi` / HPLT 3.0 (`data.hplt-project.org/three/sorted/hin_Deva`)
+- **Chat & ghost markers found in dataset (`B3`):** none in all 500 documents. Checked by known patterns and by open-ended catalogues, all 0 hits:
+  - known formats: ChatML / Llama-3 style `<|...|>` (also fullwidth `<｜...｜>`), `[INST]` / `[/INST]`, `<<SYS>>`, `<s>` / `</s>`, `<think>`, `<tool_call>`, `<tool_result>`, `<unk>` / `<pad>` / `<mask>` / `<bos>` / `<eos>`, `[CLS]` / `[SEP]` / `[MASK]`, SentencePiece `▁`, StarCoder-style `<reponame>`, `<jupyter_*>`, `<commit_*>`, `<issue_*>`;
+  - catalogues: every `<...>` token without spaces (none exist), every `[UPPERCASE]` tag (none), HTML-escaped `&lt;...&gt;` (none), line-initial role prefixes in English and Hindi (`User:`, `Assistant:`, `System:`, `Human:`, `### Instruction:`, `उपयोगकर्ता:`, `सहायक:` ...), and every invisible or private-use code point (none).
+  - Only 3 documents contain `<` at all: a chemistry equation, a `<3` emoticon, and legacy-font garbage.
+- **Dataset-specific markers:** none. `प्रश्न 1:` / `उत्तर:` lines (3 documents) are FAQ sections written by the site, natural Q&A text, not chat markers. Stray HTML tag endings (`/>` in 3 documents, `B2`) are web residue cleaned as text, not reserved as tokens.
+- **Not markers:** `U+200D` ZWJ and `U+200C` ZWNJ are part of Indic script (they control conjunct shaping), not special tokens or diseases. They do not occur in this pack (0 of 500 documents), but other Hindi sources will have them and the tokenizer must keep them.
+- **New token request:** none. The ChatML `v0` block above covers everything needed for this dataset.
+- **Action:** keep `B3` stripping in pre-training cleaning (nothing to strip in this pack); keep ZWJ/ZWNJ untouched.
 
 ### 9. Ranjani Chandrasekaran — Indic web (`ind-hi-indiccorp`)
 
