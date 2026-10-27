@@ -52,7 +52,10 @@ def test_licence_table_has_decision_and_tsai_reserves():
         if not cells or cells[0] in {"Set", ""} or set(cells[0]) <= set("-: "):
             continue
         decisions.append(cells[-1])
-    assert decisions == ["TSAI reserves"]
+    assert "chandassu" in licence
+    assert "BodduSriPavan111/chandassu" in licence
+    assert "MIT" in licence
+    assert decisions == ["TSAI reserves", "TSAI reserves"]
 
 
 def test_special_tokens_v0_has_256_block_and_assigned_tokens():
@@ -64,6 +67,9 @@ def test_special_tokens_v0_has_256_block_and_assigned_tokens():
         assert section in doc
     for member in EXPECTED_MEMBERS:
         assert member in doc
+    assert "chandassu" in doc
+    assert "_x000D_" in doc
+    assert "not a special token" in doc.lower() or "Not a special token" in doc
     for token in EXPECTED_ASSIGNED:
         assert token in doc
 

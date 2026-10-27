@@ -16,6 +16,7 @@ Shared G10 licence file (`teams/10-post-training/licences/licence_table.md`).
 | Set | Source | Language | Licence | Decision |
 | --- | --- | --- | --- | --- |
 | code-python | bigcode/starcoderdata | Code | other (per-file permissive Stack licences; attribution required) | TSAI reserves |
+| chandassu | BodduSriPavan111/chandassu | Telugu | MIT (commercial use allowed) | TSAI reserves |
 ---
 
 ## Dataset sections by G10 Core Team member (12)
@@ -28,6 +29,16 @@ Shared G10 licence file (`teams/10-post-training/licences/licence_table.md`).
 - **Source:** `bigcode/starcoderdata`
 - **Licence:** `other` — StarCoder training corpus drawn from The Stack; each file retains its upstream licence and attribution notice. Commercial use must follow per-file attribution terms.
 - **Decision:** `TSAI reserves`
+
+### 1b. Sai Teja (Lead) — Chandassu (`BodduSriPavan111/chandassu`)
+
+- **Core team:** 10. Post-training and Agentic (Lead) · **Week 2:** 9. Evaluation · **Week 3:** 12. Quantization and Serving
+- **Set:** `chandassu`
+- **Language:** Telugu (`te`)
+- **Source:** `BodduSriPavan111/chandassu` (4,651 padyams; eight metres in vruttamu, jaathi, and vupajaathi)
+- **Licence:** `MIT` — commercial use is allowed. The dataset card names the licence as MIT.
+- **Decision:** `TSAI reserves`
+- **Reading note:** 1,134 Vemana poems store a carriage return as the plain letters `_x000D_`. 23 poems have words replaced by `...`. ZWNJ and ZWJ stay in the text. They are not a licence issue.
 
 ### 2. Ajay Kumar — Dataset section *(placeholder for PR to `g10-week1-post-training`)*
 

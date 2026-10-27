@@ -80,6 +80,18 @@ The budget covers the think span and the tool trace. It does not cover the visib
   - Redaction placeholders: `<NAME>`, `<EMAIL>`, `<KEY>`, `<PASSWORD>`
 - **Action:** Strip `B3` ghost chat markers from pre-training text so the model never learns to emit control markers as plain text; register every ChatML `v0` marker above as **one special token** in G3's tokenizer.
 
+### 1b. Sai Teja (Lead) — Chandassu (`BodduSriPavan111/chandassu`)
+
+- **Core team:** 10. Post-training and Agentic (Lead) · **Week 2:** 9. Evaluation · **Week 3:** 12. Quantization and Serving
+- **Pack:** `chandassu`
+- **Language:** Telugu (`te`)
+- **Source:** `BodduSriPavan111/chandassu`
+- **Licence decision:** `TSAI reserves` (MIT on the dataset card; commercial use allowed)
+- **Chat markers found:** none. No `<|im_start|>`, `<|im_end|>`, `<|endoftext|>`, `[INST]`, `<think>`, or `<tool_call>` in the 4,651 poems.
+- **Not a special token:** `_x000D_` (1,134 Vemana poems). It is an exported carriage return left as plain letters. Strip it in cleaning. Do not give it a token id.
+- **Not markers:** the hyphen in Andhranaayaka and the danda `।` in Laavanya are the yati pause, plain text. `U+200C` ZWNJ and `U+200D` ZWJ are part of Telugu writing (1,014 poems). Do not reserve them.
+- **New token request:** none. The ChatML `v0` block above already covers this dataset. No assigned id is added or renumbered.
+
 ### 2. Ajay Kumar — Dataset section *(placeholder for PR to `g10-week1-post-training`)*
 
 - **Pack / Language / Source:** *(to be added by Ajay Kumar via PR)*

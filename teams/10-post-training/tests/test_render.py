@@ -199,4 +199,5 @@ def test_docs_match_the_plan_sheet_set():
         if not cells or cells[0] in {"Set", ""} or set(cells[0]) <= set("-: "):
             continue
         decisions.append(cells[-1])
-    assert decisions == ["TSAI reserves"]
+    assert "chandassu" in licence
+    assert decisions == ["TSAI reserves", "TSAI reserves"]
