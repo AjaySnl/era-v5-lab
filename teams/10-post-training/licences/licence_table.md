@@ -72,13 +72,18 @@ Shared G10 licence file (`teams/10-post-training/licences/licence_table.md`).
 - **Licence:** *(TBD via PR)*
 - **Decision:** `TSAI reserves`
 
-### 6. Hema Varshini Palpandian — Dataset section *(placeholder for PR to `g10-week1-post-training`)*
+### 6. Hema Varshini Palpandian — Indic web (`ind-ta-sangraha-v`)
 
-- **Set:** *(TBD via PR)*
-- **Language:** *(TBD via PR)*
-- **Source:** *(TBD via PR)*
-- **Licence:** *(TBD via PR)*
-- **Decision:** `TSAI reserves`
+- **Set:** `ind-ta-sangraha-v` (the assigned Tamil diagnosis sample).
+- **Language:** Tamil (`ta`; Sangraha split `tam`).
+- **Source:** AI4Bharat, [`ai4bharat/sangraha`](https://huggingface.co/datasets/ai4bharat/sangraha/blob/main/README.md), `verified` configuration, `tam` split, `verified/tam/*.parquet`. This mapping follows the lab pack name; the downloaded pack's release revision and source manifest still need confirmation.
+- **Declared licence:** **CC-BY-4.0**, as stated in the publisher's dataset card, checked 27 October 2026.
+- **Commercial-use rule:** [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) permits commercial sharing and adaptation subject to attribution, a licence link, indication of changes, and the remaining licence terms. Retain supplied creator, copyright and source notices. The publisher's declaration does not establish rights to every underlying source.
+- **Decision:** **`TSAI reserves`**. Proposed training status: **pending selection and provenance review**. The declared licence passes the commercial-use licence screen; this is not unconditional approval of every document. Exclude any source with missing or non-commercial terms under the team's rule.
+- **SFT/RL suitability:** Sangraha is a pretraining corpus. Its `verified` label concerns the sources/content, not a guarantee of commercial rights. It is not supplied as instruction/response examples, chosen/rejected pairs or reward-labelled trajectories. Sai Teja and the team must select the actual SFT/RL sources. Any examples derived from cleared Tamil text need task construction, quality review, provenance and contamination checks before inclusion.
+- **Measured provenance gap:** inspection of all 500 sample rows found every document `url` field empty. A source label and source-part locators are present, but the inspected metadata has no explicit licence/rights or release/revision keys. Restore the upstream source manifest and applicable notices before making a document-level inclusion decision. The local aggregate provenance report records these checks; metadata-key checks alone cannot establish rights.
+- **Attribution record:** record `AI4Bharat — Sangraha`, the source URL, applicable release revision, `CC BY 4.0`, and actual cleaning/conversion changes; retain any additional notices supplied with the selected source. Release revision and changes are pending, not filled with invented values.
+- **Repository handling:** contribute this metadata section only; do not add the raw Parquet or copy its document text into the team PR. The diagnosis submission remains a separate PR.
 
 ### 7. Lokesh Arundathi — Dataset section *(placeholder for PR to `g10-week1-post-training`)*
 
