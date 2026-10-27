@@ -74,7 +74,6 @@ Shared G10 licence file (`teams/10-post-training/licences/licence_table.md`).
 
 ### 6. Hema Varshini Palpandian — Tamil (`ind-ta-sangraha-v`)
 
-- **Core team:** 10. Post-training and Agentic
 - **Set:** `ind-ta-sangraha-v`
 - **Language:** Tamil (`ta`; source split `tam`)
 - **Source:** `ai4bharat/sangraha`, Verified Tamil subset.
