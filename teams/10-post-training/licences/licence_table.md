@@ -125,4 +125,4 @@ Shared G10 licence file (`teams/10-post-training/licences/licence_table.md`).
 - **Commercial-use data only:** Any dataset or file whose licence is missing or restricts commercial use is excluded.
 - **Decision authority:** `TSAI reserves` all dataset release and retention decisions.
 - **Repository hygiene:** Raw Parquet files never enter `era-v5-lab`.
-- **Token & effort rules:** 256 reserved special tokens (`0..255`) and four effort budgets (`1k`, `4k`, `16k`, `64k`).
+- **Token & effort rules:** 256 reserved special tokens (`0..255`) and four plain-text effort levels (`1k`, `4k`, `16k`, `64k`).
