@@ -10,10 +10,6 @@ EXPECTED_ASSIGNED = (
     "<|endoftext|>",
     "<|im_start|>",
     "<|im_end|>",
-    "<|effort_1k|>",
-    "<|effort_4k|>",
-    "<|effort_16k|>",
-    "<|effort_64k|>",
     "<|think|>",
     "<|/think|>",
     "<|tool_call|>",
@@ -75,7 +71,7 @@ def test_special_tokens_v0_has_256_block_and_assigned_tokens():
 def test_chat_format_and_swe_e2e_exist_and_cover_effort_budgets():
     chat = (TEAM / "chat-format" / "chat_format_v0.md").read_text(encoding="utf-8")
     for budget in ("1k", "4k", "16k", "64k"):
-        assert f"effort_{budget}" in chat
+        assert f"`{budget}`" in chat
     swe = (TEAM / "results" / "swe_e2e.md").read_text(encoding="utf-8")
     assert "docker" in swe.lower()
     assert "OK" in swe

@@ -1,7 +1,10 @@
 """Render and parse ChatML-style chat format v0.
 
-Rule: every chat marker is ONE special token in the tokenizer (0..255), never plain text.
-The 13 assigned chat markers and 243 reserved slots (256 total) are sent to
+Rule (instructor, 27 Oct): special tokens only for structure the model must never confuse
+with normal text: role-turn start/end, tool-call start/end, tool-result start/end, thinking
+start/end. Values inside that structure (tool names, arguments, effort level, options) are plain
+text. Effort is a plain-text line at the top of the first system turn.
+The 9 assigned markers and 247 reserved slots (256 total) are sent to
 Team 3 (G3 Tokenizer) by Sat 31 Oct so G3 reserves the token IDs.
 """
 
@@ -24,10 +27,6 @@ ASSIGNED_SURFACES: dict[int, tuple[str, str]] = {
     0: ("endoftext", "<|endoftext|>"),
     1: ("im_start", "<|im_start|>"),
     2: ("im_end", "<|im_end|>"),
-    16: ("effort_1k", "<|effort_1k|>"),
-    17: ("effort_4k", "<|effort_4k|>"),
-    18: ("effort_16k", "<|effort_16k|>"),
-    19: ("effort_64k", "<|effort_64k|>"),
     24: ("think", "<|think|>"),
     25: ("think_end", "<|/think|>"),
     26: ("tool_call", "<|tool_call|>"),
@@ -38,6 +37,7 @@ ASSIGNED_SURFACES: dict[int, tuple[str, str]] = {
 
 ASSIGNED: dict[int, str] = {idx: name for idx, (name, _) in ASSIGNED_SURFACES.items()}
 ROLES = ("system", "user", "assistant", "tool")
+EFFORT_PREFIX = "Reasoning effort: "
 
 # Plain-text XML tags that must NEVER be used in place of atomic special tokens.
 _PLAIN_TEXT_LOOKALIKES = (
@@ -154,6 +154,9 @@ def render(messages: list[dict], effort: str = "4k") -> str:
         raise RenderError("messages must be a non-empty list")
 
     parts: list[str] = []
+    first = messages[0]
+    if not (isinstance(first, dict) and first.get("role") == "system"):
+        parts.append(_turn("system", f"{EFFORT_PREFIX}{effort}"))
     for index, message in enumerate(messages):
         if not isinstance(message, dict):
             raise RenderError(f"message {index} must be an object")
@@ -168,7 +171,7 @@ def render(messages: list[dict], effort: str = "4k") -> str:
         _reject_specials(content, f"message {index} content")
 
         if role == "assistant":
-            body: list[str] = [f"{T[f'effort_{effort}']}\n"]
+            body: list[str] = []
             think = message.get("think") or ""
             if think:
                 if not isinstance(think, str):
@@ -186,6 +189,11 @@ def render(messages: list[dict], effort: str = "4k") -> str:
             parts.append(
                 _turn("tool", f"{T['tool_result']}\n{content}\n{T['tool_result_end']}")
             )
+        elif role == "system" and index == 0:
+            if content.startswith(EFFORT_PREFIX):
+                raise RenderError(f"system content must not start with {EFFORT_PREFIX!r}")
+            line = f"{EFFORT_PREFIX}{effort}"
+            parts.append(_turn("system", f"{line}\n\n{content}" if content else line))
         else:
             parts.append(_turn(role, content))
     parts.append(T["endoftext"])
@@ -221,17 +229,18 @@ def tokenize_markers(text: str) -> list[tuple[str, int | str]]:
     return items
 
 
-def _parse_assistant(body: str) -> tuple[str, dict]:
-    this_effort = None
-    for name in EFFORT_BUDGETS:
-        prefix = f"{T[f'effort_{name}']}\n"
-        if body.startswith(prefix):
-            this_effort = name
-            body = body[len(prefix) :]
-            break
-    if this_effort is None:
-        raise RenderError("assistant turn is missing an effort token")
+def _parse_system_effort(body: str) -> tuple[str, str]:
+    """Split the first system turn into (effort level, remaining system content)."""
+    if not body.startswith(EFFORT_PREFIX):
+        raise RenderError(f"first system turn must start with {EFFORT_PREFIX!r}")
+    rest = body[len(EFFORT_PREFIX) :]
+    level, sep, content = rest.partition("\n\n")
+    if level not in EFFORT_BUDGETS:
+        raise RenderError(f"effort must be one of {', '.join(EFFORT_BUDGETS)}")
+    return level, content
 
+
+def _parse_assistant(body: str) -> dict:
     message: dict = {"role": "assistant"}
     think_open = f"{T['think']}\n"
     think_close = f"\n{T['think_end']}\n"
@@ -266,7 +275,7 @@ def _parse_assistant(body: str) -> tuple[str, dict]:
     if body:
         _reject_specials(body, "parsed text")
         message["content"] = body
-    return this_effort, message
+    return message
 
 
 def parse(text: str) -> dict:
@@ -297,13 +306,16 @@ def parse(text: str) -> dict:
         if text.startswith("\n", pos):
             pos += 1
 
+        if not messages and effort is None:
+            if role != "system":
+                raise RenderError("first turn must be the system turn with the effort line")
+            effort, body = _parse_system_effort(body)
+            _reject_specials(body, "parsed text")
+            if body:
+                messages.append({"role": "system", "content": body})
+            continue
         if role == "assistant":
-            this_effort, message = _parse_assistant(body)
-            if effort is None:
-                effort = this_effort
-            elif effort != this_effort:
-                raise RenderError("assistant turns disagree on the effort budget")
-            messages.append(message)
+            messages.append(_parse_assistant(body))
         elif role == "tool":
             open_tag = f"{T['tool_result']}\n"
             close_tag = f"\n{T['tool_result_end']}"

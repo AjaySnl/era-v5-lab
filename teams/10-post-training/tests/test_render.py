@@ -32,10 +32,6 @@ def test_block_reserves_256_ids_and_every_marker_is_one_special_token():
         "<|endoftext|>",
         "<|im_start|>",
         "<|im_end|>",
-        "<|effort_1k|>",
-        "<|effort_4k|>",
-        "<|effort_16k|>",
-        "<|effort_64k|>",
         "<|think|>",
         "<|/think|>",
         "<|tool_call|>",
@@ -58,7 +54,7 @@ def test_effort_budgets_and_turn_tokens():
     assert names["tool_result"] == "<|tool_result|>"
     assert names["tool_result_end"] == "<|/tool_result|>"
     for effort in render_mod.EFFORT_BUDGETS:
-        assert names[f"effort_{effort}"] == f"<|effort_{effort}|>"
+        assert f"effort_{effort}" not in names  # effort is plain text, not a token
         assert render_mod.effort_limit(effort) == render_mod.EFFORT_BUDGETS[effort]
 
 
@@ -86,14 +82,15 @@ def test_render_parse_roundtrip_and_atomic_marker_tokenization():
     ]
     for effort in ("1k", "4k", "16k", "64k"):
         text = render_mod.render(messages, effort=effort)
-        assert f"<|effort_{effort}|>" in text
+        assert f"Reasoning effort: {effort}" in text
+        assert "<|effort_" not in text
         assert "<|im_start|>assistant\n" in text
         assert "<|think|>\nThe return adds one too many.\n<|/think|>" in text
         assert "<|tool_call|>\n" in text and "\n<|/tool_call|>" in text
         assert "<|tool_result|>\n" in text and "\n<|/tool_result|>" in text
         for other in ("1k", "4k", "16k", "64k"):
             if other != effort:
-                assert f"<|effort_{other}|>" not in text
+                assert f"Reasoning effort: {other}" not in text
         parsed = render_mod.parse(text)
         assert parsed["effort"] == effort
         assert parsed["messages"] == messages
@@ -138,6 +135,34 @@ def test_render_rejects_bad_effort_role_and_plain_or_embedded_markers():
             raise AssertionError(f"marker leak {bad!r} should fail")
 
 
+def test_effort_is_a_plain_text_line_in_the_first_system_turn():
+    # With a system message, the effort line leads that turn.
+    with_system = render_mod.render(
+        [{"role": "system", "content": "Be brief."}, {"role": "user", "content": "hi"}],
+        effort="16k",
+    )
+    assert with_system.startswith("<|im_start|>system\nReasoning effort: 16k\n\nBe brief.<|im_end|>\n")
+    # Without one, a system turn holding only the effort line is added.
+    without = render_mod.render([{"role": "user", "content": "hi"}], effort="1k")
+    assert without.startswith("<|im_start|>system\nReasoning effort: 1k<|im_end|>\n<|im_start|>user\n")
+    parsed = render_mod.parse(without)
+    assert parsed == {"effort": "1k", "messages": [{"role": "user", "content": "hi"}]}
+    # A user-written line that looks like the effort line is rejected, not misread.
+    try:
+        render_mod.render([{"role": "system", "content": "Reasoning effort: 64k"}])
+    except render_mod.RenderError:
+        pass
+    else:
+        raise AssertionError("system content starting with the effort line should fail")
+    # A transcript whose first turn is not the effort system turn does not parse.
+    try:
+        render_mod.parse("<|im_start|>user\nhi<|im_end|>\n<|endoftext|>")
+    except render_mod.RenderError:
+        pass
+    else:
+        raise AssertionError("missing effort turn should fail")
+
+
 def test_empty_optional_fields_are_omitted():
     text = render_mod.render(
         [{"role": "assistant", "content": "", "think": "", "tool_calls": []}],
@@ -155,7 +180,7 @@ def test_docs_match_the_plan_sheet_set():
     licence = (TEAM / "licences" / "licence_table.md").read_text(encoding="utf-8")
     for budget in ("1k", "4k", "16k", "64k"):
         assert budget in chat
-        assert f"effort_{budget}" in token_doc
+        assert f"`{budget}`" in token_doc
     for _, name, surface, status in render_mod.all_tokens():
         if status == "assigned":
             assert surface in token_doc
