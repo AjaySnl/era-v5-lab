@@ -86,13 +86,14 @@ Shared G10 licence file (`teams/10-post-training/licences/licence_table.md`).
 - **Licence:** *(TBD via PR)*
 - **Decision:** `TSAI reserves`
 
-### 9. Ranjani Chandrasekaran — Indic web (`ind-hi-indiccorp`) *(placeholder for PR to `g10-week1-post-training`)*
+### 9. Ranjani Chandrasekaran — Indic web (`ind-hi-indiccorp`)
 
-- **Set:** `ind-hi-indiccorp` *(to be confirmed/completed via PR)*
-- **Language:** `Indic`
-- **Source:** *(TBD via PR)*
-- **Licence:** *(TBD via PR)*
-- **Decision:** `TSAI reserves`
+- **Set:** `ind-hi-indiccorp` — IndicCorpV2 Hindi subset (`data/hi-{1,2,3}.txt`)
+- **Language:** Hindi (`hi`)
+- **Source:** `ai4bharat/IndicCorpV2` (HuggingFace, AI4Bharat)
+- **Licence:** CC-BY-4.0 — attribution required; commercial use permitted
+- **Decision:** `include` — commercial-use only rule satisfied (CC-BY-4.0 allows commercial use with attribution; attribution to be carried in the model card)
+
 
 ### 10. Ravi Naik — Dataset section *(placeholder for PR to `g10-week1-post-training`)*
 
