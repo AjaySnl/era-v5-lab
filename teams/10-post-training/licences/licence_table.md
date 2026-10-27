@@ -16,7 +16,6 @@ Shared G10 licence file (`teams/10-post-training/licences/licence_table.md`).
 | Set | Source | Language | Licence | Decision |
 | --- | --- | --- | --- | --- |
 | code-python | bigcode/starcoderdata | Code | other (per-file permissive Stack licences; attribution required) | TSAI reserves |
-
 ---
 
 ## Dataset sections by G10 Core Team member (12)
@@ -78,13 +77,13 @@ Shared G10 licence file (`teams/10-post-training/licences/licence_table.md`).
 - **Licence:** *(TBD via PR)*
 - **Decision:** `TSAI reserves`
 
-### 8. Rammohan Madhusudan — Dataset section *(placeholder for PR to `g10-week1-post-training`)*
+### 8. Rammohan Madhusudan — Indic web (`ind-hi-hplt` · HPLT 3.0 `hin_Deva`)
 
-- **Set:** *(TBD via PR)*
-- **Language:** *(TBD via PR)*
-- **Source:** *(TBD via PR)*
-- **Licence:** *(TBD via PR)*
-- **Decision:** `TSAI reserves`
+- **Set:** `ind-hi-hplt`
+- **Language:** `Hindi` (`hin_Deva`)
+- **Source:** HPLT 3.0 monolingual, sorted release: `data.hplt-project.org/three/sorted/hin_Deva` (web crawl from Internet Archive and Common Crawl; catalogue at `hplt-project.org/datasets/v3.0`)
+- **Licence:** `CC0-1.0` for the **packaging only**. HPLT's Terms of Use: "We do not own any of the text from which these text data has been extracted" and "We license the actual packaging of these text data under the Creative Commons CC0 license". The underlying web text keeps its original copyright (no per-document licence is given). HPLT 3.0 filters robots.txt opt-outs and removes sources on a takedown request in the next release.
+- **Decision:** `TSAI reserves`. Commercial use of the collection is allowed (CC0). For the web text itself, treat it like every other web-crawl source: honour robots.txt opt-outs and takedown requests, keep each document's source URL so it can be removed, and do not redistribute raw text.
 
 ### 9. Ranjani Chandrasekaran — Indic web (`ind-hi-indiccorp`) *(placeholder for PR to `g10-week1-post-training`)*
 
