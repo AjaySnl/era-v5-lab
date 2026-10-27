@@ -120,10 +120,15 @@ The budget covers the think span and the tool trace. It does not cover the visib
 - **Pack / Language / Source:** *(to be added by Rammohan Madhusudan via PR)*
 - **Dataset markers:** *(to be added by Rammohan Madhusudan via PR; deduplicated into consolidated list on merge)*
 
-### 9. Ranjani Chandrasekaran — Indic web (`ind-hi-indiccorp`) *(placeholder for PR to `g10-week1-post-training`)*
+### 9. Ranjani Chandrasekaran — Indic web (`ind-hi-indiccorp`)
 
-- **Pack / Language / Source:** `ind-hi-indiccorp` (`Indic` — to be confirmed/completed by Ranjani Chandrasekaran via PR)
-- **Dataset markers:** *(to be added by Ranjani Chandrasekaran via PR; note per `diagnosis/DISEASES.md` that `U+200D` ZWJ and `U+200C` ZWNJ are valid script joiners, not special tokens or diseases)*
+- **Pack / Language / Source:** `ind-hi-indiccorp` — Hindi (`hi`) — `ai4bharat/IndicCorpV2` (`data/hi-{1,2,3}.txt`)
+- **Dataset markers:** No ChatML-style ghost markers (`<|im_start|>`, `<|endoftext|>`, `<think>`, `<|tool_call|>`) found in the 500-document diagnosis sample. The pack is news/web prose, not chat data.
+  - `U+200D` ZWJ and `U+200C` ZWNJ appear as legitimate Devanagari script joiners — per `diagnosis/DISEASES.md` these are valid text characters, **not** special tokens or diseases. Keep as plain text in the tokenizer.
+  - Mojibake residue found in some documents: `ज़्` (ja + nukta + virama) where `र्` or `ड़` is expected — corpus damage (G1), not a marker.
+  - Latin-script spans in otherwise-Hindi text (`Reverse osmosis`, `COVID19`, `WWE`, `USIBC`) and URLs — normal text, no special-token need.
+  - **Action:** none required to strip ghost markers from this pack. Confirmed clean for ChatML v0.
+
 
 ### 10. Ravi Naik — Dataset section *(placeholder for PR to `g10-week1-post-training`)*
 
