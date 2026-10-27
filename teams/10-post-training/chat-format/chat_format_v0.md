@@ -74,3 +74,56 @@ def add(a, b):
 Removed the extra increment.<|im_end|>
 <|endoftext|>
 ```
+
+## Tamil application — `ind-ta-sangraha-v`
+
+The existing format and `render.py` apply to Tamil without language-specific control tokens. The examples below are newly authored demonstrations, not extracted Sangraha documents or approved training rows.
+
+- Read and write UTF-8. Preserve content exactly, including combining sequences, pulli, ZWJ/ZWNJ if present, punctuation, mixed-script spans and whitespace. Rendering does not normalize, translate, repair or clean source text.
+- Use the same `system`, `user`, `assistant`, `tool` role strings and the same nine markers. Tamil text belongs in content and tool JSON string values. `ta`, `tam`, effort values, tool names and arguments are plain text.
+- For the current v0 demo, use one tool call followed by one tool result. The renderer does not preserve call IDs or tool-name metadata, so parallel tool/result correlation needs a later schema decision.
+
+Example input to the shared Python module:
+
+```python
+messages = [
+    {"role": "system", "content": "தமிழில் பதிலளி."},
+    {"role": "user", "content": "தமிழ் உரையை UTF-8 கோப்பில் சேமி."},
+    {"role": "assistant", "tool_calls": [
+        {"name": "write_text", "arguments": {
+            "path": "message.txt", "text": "தமிழ் மொழி"}}
+    ]},
+    {"role": "tool", "content": "UTF-8 write completed."},
+    {"role": "assistant", "content": "தமிழ் உரை சேமிக்கப்பட்டது."},
+]
+text = render(messages, effort="4k")
+assert parse(text) == {"effort": "4k", "messages": messages}
+```
+
+Rendered excerpt:
+
+```text
+<|im_start|>user
+தமிழ் உரையை UTF-8 கோப்பில் சேமி.<|im_end|>
+<|im_start|>assistant
+<|tool_call|>
+{"arguments":{"path":"message.txt","text":"தமிழ் மொழி"},"name":"write_text"}
+<|/tool_call|>
+<|im_end|>
+<|im_start|>tool
+<|tool_result|>
+UTF-8 write completed.
+<|/tool_result|><|im_end|>
+```
+
+### Supervision and validation boundaries
+
+For a future SFT integration, mask system/user content and tool observations; supervise assistant replies and assistant-generated tool calls. The SWE demonstration contains no reasoning traces. This is a proposed training policy: `render.py` emits strings, not token-aligned labels or loss masks. A real tokenizer integration must define boundary labels and check the actual tokens.
+
+`tokenize_markers()` checks the declared marker-to-slot mapping with a Python scanner. It does not prove G3's trained tokenizer registers markers atomically. Before the final handoff, G3 must verify each structural surface encodes as one intended ID and ordinary Tamil round-trips correctly. Effort values are metadata; the renderer does not measure or enforce their token budgets.
+
+Current v0 rejects literal control markers inside message content and normalizes away empty optional fields and an empty first system message. Exact round-trip claims apply to the supported canonical message shape illustrated above.
+
+### Executed Tamil SWE task
+
+See `results/tamil_swe_e2e.md` and `swe-task/run_tamil_e2e.py`: a local UTF-8 file-writing bug, an actual failing test, a patch, an actual passing test and a fully round-tripped Tamil tool trajectory. This authored smoke task establishes the local serialization and tool-observation path; it is not an external SWE-bench score or a model-training run.
