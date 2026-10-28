@@ -161,17 +161,16 @@ The budget covers the think span and the tool trace. It does not cover the visib
 - **Pack / Language / Source:** *(to be added by Ashish Kamble via PR)*
 - **Dataset markers:** *(to be added by Ashish Kamble via PR; deduplicated into consolidated list on merge)*
 
+
 ### 6. Hema Varshini Palpandian — Tamil (`ind-ta-sangraha-v`)
 
-- **Pack / Language / Source:** `ind-ta-sangraha-v` / Tamil (`ta`, source split `tam`) / `ai4bharat/sangraha`, Verified. This is prose for diagnosis; it does not define a new chat format.
-- **Observed dataset markers (27 October 2026):** scanned **500/500 documents**, with no null text, using a local Python/pyarrow pattern scan. No matches for the **256 declared token surfaces** or the listed chat/tool patterns, English/Tamil role-prefix candidates, angle tags or escaped angle tags. The broad uppercase-bracket pattern matched **2 documents**; a deterministic local context check classified both as ordinary timezone annotations beside timestamps, with no unresolved candidates. This is pattern screening, not a blanket “B3-free” claim or a human review of every document. Tamil characters occur in all 500 documents; ZWJ/ZWNJ, other format controls and private-use characters each occur in zero documents. Aggregate reports and the scan script are retained in the local review package; this PR includes their summaries.
-- **Input fingerprint:** SHA256 `1df8e92c0f6a18d510ec8af5bf97d41aacf4834746fb9f24dc97821018057d78`. This fingerprints the local sample, not the full upstream release.
-- **Tamil text policy:** Tamil letters, dependent vowel signs, pulli (`்`, U+0BCD), digits, punctuation, combining sequences and natural Tamil/English mixing remain ordinary text. Preserve ZWJ (U+200D) and ZWNJ (U+200C) if present; these are Unicode text, not new control tokens. Do not strip combining marks or transliterate text in the renderer.
-- **New special-token request:** **none** for Tamil. Use the existing nine assigned structural markers and 247 reserved slots. Language labels such as `ta` / `tam` and any tool names or JSON values remain plain text.
-- **Tool results:** the lead's branch already includes `<|tool_result|>` at slot `028` and `<|/tool_result|>` at `029`. Keep them as structural delimiters around tool observations. The one-line rationale is: “Separate environment observations from assistant-generated tool calls and replies.” No duplicate token or new ID is requested.
-- **Collision policy:** the current renderer rejects literal assigned/reserved marker surfaces and XML marker look-alikes inside content. Quarantine a colliding example for review; do not silently delete meaningful Tamil prose or treat every HTML tag as a chat token. The aggregate scan is a screening aid, not a complete manual B3 diagnosis.
-- **28 October v0 handoff:** Tamil requests no additions to the consolidated table. The complete-pack pattern scan and timestamp-candidate classifications are summarized above; no new structural marker was identified by these checks.
-- **31 October final-list candidate:** retain the lead's nine assigned markers and 247 reservations, subject to Sai Teja's final list and G3 tokenizer validation. The numeric slots are the team's proposed allocation, not verified IDs from a trained tokenizer. **Final team approval is pending.**
+- **Pack / Language / Source:** `ind-ta-sangraha-v` / Tamil (`ta`; source split `tam`) / `ai4bharat/sangraha`, Verified Tamil subset.
+- **Marker scan (27 October 2026):** Scanned all 500 documents, with no null text. No matches for the 256 token surfaces in the list used for this scan or the tested chat/tool marker patterns. Two broader bracket-pattern matches were classified by a local context check as timezone annotations beside timestamps. These findings cover the automated checks on this sample.
+- **Unicode findings:** Tamil characters occur in all 500 documents. No ZWJ, ZWNJ, other format-control or private-use characters were detected.
+- **Text handling:** Preserve Tamil letters, vowel signs, pulli (`்`, U+0BCD), punctuation, line breaks, indentation and natural Tamil/English mixing. Preserve ZWJ/ZWNJ if encountered in other samples. Rendering should preserve the supplied text.
+- **New special-token request:** None based on this sample. The existing shared chat markers cover the identified structural needs. Language labels such as `ta` and `tam` remain plain text.
+- **Tool-result markers:** Use the shared `<|tool_result|>` and `<|/tool_result|>` markers, listed at slots `028` and `029` in the reviewed format. No duplicate markers are requested.
+
 
 ### 7. Lokesh Arundathi — Dataset section *(placeholder for PR to `g10-week1-post-training`)*
 
