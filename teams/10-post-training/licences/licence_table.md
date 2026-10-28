@@ -48,13 +48,13 @@ Shared G10 licence file (`teams/10-post-training/licences/licence_table.md`).
 - **Licence:** *(TBD via PR)*
 - **Decision:** `TSAI reserves`
 
-### 3. Amit T — Dataset section *(placeholder for PR to `g10-week1-post-training`)*
+### 3. Amit T — Indic web (`ind-mr-fw2` · FineWeb-2 Marathi)
 
-- **Set:** *(TBD via PR)*
-- **Language:** *(TBD via PR)*
-- **Source:** *(TBD via PR)*
-- **Licence:** *(TBD via PR)*
-- **Decision:** `TSAI reserves`
+- **Set:** `ind-mr-fw2` — FineWeb-2 Marathi split (`data/mr/`)
+- **Language:** Marathi (`mr`)
+- **Source:** `HuggingFaceFW/fineweb-2` (Hugging Face, 2024; Common Crawl curated web pipeline)
+- **Licence:** `ODC-By v1.0` (Open Data Commons Attribution License v1.0). Commercial use is explicitly permitted with attribution.
+- **Decision:** `TSAI reserves` — commercial-use only rule satisfied. Attribution requirement to be fulfilled in the public model card and training datasheet. Raw data not committed to repository.
 
 ### 4. Anirudh Narla — Dataset section *(placeholder for PR to `g10-week1-post-training`)*
 
@@ -107,7 +107,7 @@ Shared G10 licence file (`teams/10-post-training/licences/licence_table.md`).
 - **Language:** Hindi (`hi`)
 - **Source:** `ai4bharat/IndicCorpV2` (HuggingFace, AI4Bharat)
 - **Licence:** CC-BY-4.0 — attribution required; commercial use permitted
-- **Decision:** `include` — commercial-use only rule satisfied (CC-BY-4.0 allows commercial use with attribution; attribution to be carried in the model card)
+- **Decision:** `TSAI reserves` (satisfies commercial-use rule via CC-BY-4.0 attribution; attribution to be carried in the model card)
 
 
 ### 10. Ravi Naik — Dataset section *(placeholder for PR to `g10-week1-post-training`)*
@@ -139,6 +139,9 @@ Shared G10 licence file (`teams/10-post-training/licences/licence_table.md`).
 ## Strategy v0
 
 - **Commercial-use data only:** Any dataset or file whose licence is missing or restricts commercial use is excluded.
-- **Decision authority:** `TSAI reserves` all dataset release and retention decisions.
-- **Repository hygiene:** Raw Parquet files never enter `era-v5-lab`.
+- **Decision authority:** `TSAI reserves` all dataset release and retention decisions across all members.
+- **Repository hygiene:** Raw Parquet, Arrow, or binary training files never enter `era-v5-lab` (enforced by `pr-guard`).
 - **Token & effort rules:** 256 reserved special tokens (`0..255`) and four plain-text effort levels (`1k`, `4k`, `16k`, `64k`).
+- **Benchmark decontamination protocol:** All training splits (code and text) must be programmatically decontaminated against evaluation benchmarks (SWE-bench, HumanEval, MBPP, LiveCodeBench, BigCodeBench) using 13-gram exact match and embedding-similarity filtering prior to post-training.
+- **Provenance & attribution ledger:** Every permissive dataset (ODC-By, CC-BY, Apache-2.0, MIT, Stack per-file notices) has its snapshot timestamp, source repository URL, and licensing terms recorded for automatic aggregation into the release model card.
+- **Right-to-be-forgotten & takedown handling:** For curated web crawls (FineWeb-2, HPLT 3.0), maintain source URL manifests to fulfill upstream robots.txt exclusions, DMCA notices, and GDPR Article 17 deletion requests across training checkpoint iterations.

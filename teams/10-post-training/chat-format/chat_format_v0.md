@@ -17,8 +17,20 @@ Markers in `v0` (each is one atomic special token in the tokenizer, never split 
 
 Effort is **not** a token. It is a plain-text line, `Reasoning effort: {level}`, at the top of the first system turn. Levels are `1k`, `4k`, `16k` and `64k` (budgets of `1024`, `4096`, `16384` and `65536` tokens covering think + tool trace, excluding the final visible reply).
 
-- Plain-text XML look-alikes (`<think>`, `</think>`, `<tool_call>`, `</tool_call>`, `<tool_result>`, `</tool_result>`) are rejected by `render.py`.
+- Plain-text XML look-alikes and Unicode homoglyphs (`<think>`, `</think>`, `<tool_call>`, `</tool_call>`, `<tool_result>`, `</tool_result>`, `<｜think｜>`, `＜think＞`) are strictly rejected by `render.py`.
 - All 9 assigned markers and 247 reserved slots (`0..255`) are listed in `teams/10-post-training/special-tokens/special_tokens_v0.md` for Team 3 (G3) to reserve by Saturday 31 Oct.
+
+## Multi-Tier Context Hierarchy & RBAC Privilege Planes
+
+In frontier agentic coding, context is structured into four deterministic tiers:
+1. **Tier 0 (System Directives & RBAC Boundaries - P0):** Core model identity, safety guardrails, and reasoning effort conditioning line (`Reasoning effort: {level}`). Fixed by application host; untrusted user/tool data cannot alter.
+2. **Tier 1 (Capabilities & Tool Registry - P0/P1):** Injected tool schemas, `SKILL.md` workflows, and capability descriptions formatted in structured JSON/Markdown.
+3. **Tier 2 (Project & Workspace Map - P1):** Active git status, directory tree, and file boundaries (`<|file_sep|>`) defining the environment state.
+4. **Tier 3 (Conversation History - P1):** Prior user requests and model interactions.
+5. **Tier 4 (Working Memory & Execution - P2/P3):** Internal Chain-of-Thought reasoning traces (`<|think|>...<|/think|>`) and untrusted tool outputs (`<|tool_result|>...<|/tool_result|>`).
+
+### Context Sizing & Effort Budgets
+Reasoning effort budgets (`1k` = 1,024, `4k` = 4,096, `16k` = 16,384, `64k` = 65,536 tokens) constrain *only* the think span and tool trace. For a `64k` effort budget, the total serving context window must scale to at least **128k tokens** (aligned with Teams 3, 5, and 12).
 
 ## Turn structure
 
@@ -30,9 +42,10 @@ Roles are `system`, `user`, `assistant`, and `tool`.
 2. **`assistant` turn:**
    `<|im_start|>assistant\n`, then, in order and omitting empty optional sections:
    - Optional reasoning span wrapped in atomic special tokens: `<|think|>\n{think}\n<|/think|>\n`
-   - Zero or more tool calls, each wrapped in atomic special tokens around plain-text JSON: `<|tool_call|>\n{"arguments":{...},"name":"..."}\n<|/tool_call|>\n`
+   - Zero or more tool calls, each wrapped in atomic special tokens around plain-text JSON: `<|tool_call|>\n{"arguments":{...},"id":"...","name":"..."}\n<|/tool_call|>\n`
    - Optional visible reply text: `{content}`
    Closed by `<|im_end|>\n`.
+   *(Tool calls optionally include an `"id"` field to deterministically bind parallel tool invocations).*
 3. **`tool` turn:**
    `<|im_start|>tool\n<|tool_result|>\n{content}\n<|/tool_result|><|im_end|>\n` (tool output `content` is required).
 4. **End of transcript:**
