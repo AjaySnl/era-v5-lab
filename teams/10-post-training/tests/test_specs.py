@@ -85,3 +85,13 @@ def test_chat_format_and_swe_e2e_exist_and_cover_effort_budgets():
     assert (TEAM / "swe-task" / "Dockerfile").exists()
     assert (TEAM / "swe-task" / "run_e2e.py").exists()
 
+
+def test_special_tokens_v1_if_present():
+    path = TEAM / "special-tokens" / "special_tokens_v1.md"
+    if path.exists():
+        doc = path.read_text(encoding="utf-8")
+        assert "256" in doc
+        assert "fim_prefix" in doc
+        assert "subagent_call" in doc
+        assert "eval_fp_0" in doc
+

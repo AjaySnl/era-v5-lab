@@ -8,6 +8,13 @@ Shared G10 special-token file (`teams/10-post-training/special-tokens/special_to
 - **Instructor ruling, 27 Oct:** special tokens only for structure that the model must never confuse with normal text (role-turn start and end, tool call start and end, tool result start and end, thinking start and end). Values inside that structure are plain text: tool names, arguments, effort level, options and settings. Keep the list short; the lead owns the final list and TSAI reviews it at the Gate.
 - **Every marker below must be one atomic special token** in the tokenizer, never split into subword pieces, and plain-text tags like `<think>` or `<tool_call>` are rejected.
 - **256 reserved token IDs (`0..255`):** G3 reserves the full 256-ID block. Assigned IDs below are frozen; unassigned IDs in `0..255` are reserved (`<|reserved_003|>` .. `<|reserved_255|>`).
+- **Security & token smuggling defense (G3 Tokenizer guidance):**
+  - **Unicode Normalization:** Pre-tokenization pipeline must enforce Unicode NFKC normalization to prevent homoglyph attacks (e.g., Cyrillic or fullwidth `<｜think｜>`) from smuggling past prompt filters.
+  - **Roadmap for reserved slots (`003..023`, `030..255`):**
+    - Code Infilling (FIM): Slots `010..012` allocated for `<|fim_prefix|>`, `<|fim_middle|>`, `<|fim_suffix|>` for agentic surgical code repairs.
+    - Repository Context: Slots `013..014` allocated for `<|repo_name|>`, `<|file_sep|>` for multi-file workspace mapping.
+    - Delegation: Slots `015`, `020` allocated for sub-agent invocation (`<|subagent_call|>`, `<|subagent_return|>`).
+    - Evaluation Fingerprints: Slots `021..023` reserved for Team 9 (G9) fingerprints due 28 Oct.
 
 ## Team workflow (Core Team · 12 members)
 
@@ -27,6 +34,16 @@ TSAI reserves 256 token IDs (`0..255`). Every chat marker below is registered as
 | `000` | `endoftext` | `<\|endoftext\|>` | End of document / transcript |
 | `001` | `im_start` | `<\|im_start\|>` | Start of a ChatML turn |
 | `002` | `im_end` | `<\|im_end\|>` | End of a ChatML turn |
+| `010` | `fim_prefix` | `<\|fim_prefix\|>` | Fill-In-The-Middle prefix anchor for code infilling |
+| `011` | `fim_middle` | `<\|fim_middle\|>` | Fill-In-The-Middle middle target slot for code infilling |
+| `012` | `fim_suffix` | `<\|fim_suffix\|>` | Fill-In-The-Middle suffix context anchor |
+| `013` | `repo_name` | `<\|repo_name\|>` | Repository / package identifier anchor in multi-file context |
+| `014` | `file_sep` | `<\|file_sep\|>` | Multi-file boundary delimiter in workspace repo map |
+| `015` | `subagent_call` | `<\|subagent_call\|>` | Sub-agent / delegation invocation boundary |
+| `020` | `subagent_return` | `<\|subagent_return\|>` | Sub-agent / delegation return boundary |
+| `021` | `eval_fp_0` | `<\|eval_fp_0\|>` | Evaluation fingerprint marker 0 (reserved for Team 9) |
+| `022` | `eval_fp_1` | `<\|eval_fp_1\|>` | Evaluation fingerprint marker 1 (reserved for Team 9) |
+| `023` | `eval_fp_2` | `<\|eval_fp_2\|>` | Evaluation fingerprint marker 2 (reserved for Team 9) |
 | `024` | `think` | `<\|think\|>` | Start of reasoning trace (1 special token, never plain `<think>`) |
 | `025` | `think_end` | `<\|/think\|>` | End of reasoning trace (1 special token, never plain `</think>`) |
 | `026` | `tool_call` | `<\|tool_call\|>` | Start of tool call JSON payload (1 special token) |
@@ -40,6 +57,16 @@ Machine-readable list of assigned markers for G3 (`ID Name Surface`):
 000 endoftext <|endoftext|>
 001 im_start <|im_start|>
 002 im_end <|im_end|>
+010 fim_prefix <|fim_prefix|>
+011 fim_middle <|fim_middle|>
+012 fim_suffix <|fim_suffix|>
+013 repo_name <|repo_name|>
+014 file_sep <|file_sep|>
+015 subagent_call <|subagent_call|>
+020 subagent_return <|subagent_return|>
+021 eval_fp_0 <|eval_fp_0|>
+022 eval_fp_1 <|eval_fp_1|>
+023 eval_fp_2 <|eval_fp_2|>
 024 think <|think|>
 025 think_end <|/think|>
 026 tool_call <|tool_call|>
@@ -48,7 +75,7 @@ Machine-readable list of assigned markers for G3 (`ID Name Surface`):
 029 tool_result_end <|/tool_result|>
 ```
 
-All remaining 247 IDs in `0..255` (`003..023`, `030..255`) are reserved by TSAI as `<|reserved_003|>` through `<|reserved_255|>`.
+All remaining 237 IDs in `0..255` (`003..009`, `016..019`, `030..255`) are reserved by TSAI as `<|reserved_003|>` through `<|reserved_255|>`.
 
 ### Effort levels (plain text, not tokens)
 
@@ -97,10 +124,32 @@ The budget covers the think span and the tool trace. It does not cover the visib
 - **Pack / Language / Source:** *(to be added by Ajay Kumar via PR)*
 - **Dataset markers:** *(to be added by Ajay Kumar via PR; deduplicated into consolidated list on merge)*
 
-### 3. Amit T — Dataset section *(placeholder for PR to `g10-week1-post-training`)*
+### 3. Amit T — Indic web (`ind-mr-fw2` · FineWeb-2 Marathi)
 
-- **Pack / Language / Source:** *(to be added by Amit T via PR)*
-- **Dataset markers:** *(to be added by Amit T via PR; deduplicated into consolidated list on merge)*
+- **Pack / Language / Source:** `ind-mr-fw2` — Marathi (`mr`) — `HuggingFaceFW/fineweb-2` (`data/mr/`)
+- **Dataset markers & script diagnosis:**
+  - Zero ChatML-style ghost markers (`<|im_start|>`, `<|endoftext|>`, `<think>`, `<|tool_call|>`) found in the 500-document diagnosis sample. The pack consists of curated web and prose text, not conversational traces.
+  - Script joiners: `U+200D` (Zero Width Joiner, ZWJ) and `U+200C` (Zero Width Non-Joiner, ZWNJ) are vital Marathi orthographic characters (governing eyelash-ra `ऱ्या` conjunct formations and virama ligatures). Per `diagnosis/DISEASES.md`, these are valid text characters, **not** special tokens or anomalies. Must be preserved as standard text by G3's tokenizer.
+  - Latin code-mixing: Natural technical and proper-noun English terms (`Diabetes`, `COVID19`, URLs) occur without special-token requirements.
+  - Mojibake & punctuation anomalies (e.g. ASCII pipe `|` used as danda) handled at text-cleaning stage (G4), not in tokenizer vocabulary.
+  - **Action:** No ghost markers to strip; keep ZWJ/ZWNJ as standard characters in vocabulary. Confirmed clean for ChatML v0.
+- **New special-token allocations contributed by Amit T:**
+  In addition to verifying dataset cleanliness, Amit T contributes the allocation of 10 new special tokens carved out from the reserved block for code infilling, repository context, sub-agent orchestration, and evaluation fingerprinting:
+  - **Fill-In-The-Middle (FIM) Code Infilling (Slots `010..012`):**
+    - `010 fim_prefix <|fim_prefix|>`: Code infilling prefix context anchor.
+    - `011 fim_middle <|fim_middle|>`: Infilling generation slot.
+    - `012 fim_suffix <|fim_suffix|>`: Suffix context anchor.
+  - **Repository & Workspace Context (Slots `013..014`):**
+    - `013 repo_name <|repo_name|>`: Multi-file repository boundary.
+    - `014 file_sep <|file_sep|>`: Multi-file separation delimiter.
+  - **Sub-Agent Delegation (Slots `015`, `020`):**
+    - `015 subagent_call <|subagent_call|>`: Multi-agent delegation invocation.
+    - `020 subagent_return <|subagent_return|>`: Multi-agent response boundary.
+  - **Evaluation Fingerprints (Slots `021..023`):**
+    - `021 eval_fp_0 <|eval_fp_0|>`: Reserved benchmark fingerprint token 0 for Team 9.
+    - `022 eval_fp_1 <|eval_fp_1|>`: Reserved benchmark fingerprint token 1 for Team 9.
+    - `023 eval_fp_2 <|eval_fp_2|>`: Reserved benchmark fingerprint token 2 for Team 9.
+  - **Decision:** `TSAI reserves`. All remaining unassigned slots (`003..009`, `016..019`, `030..255`) remain reserved `<|reserved_NNN|>`.
 
 ### 4. Anirudh Narla — Dataset section *(placeholder for PR to `g10-week1-post-training`)*
 
