@@ -161,10 +161,16 @@ The budget covers the think span and the tool trace. It does not cover the visib
 - **Pack / Language / Source:** *(to be added by Ashish Kamble via PR)*
 - **Dataset markers:** *(to be added by Ashish Kamble via PR; deduplicated into consolidated list on merge)*
 
-### 6. Hema Varshini Palpandian — Dataset section *(placeholder for PR to `g10-week1-post-training`)*
 
-- **Pack / Language / Source:** *(to be added by Hema Varshini Palpandian via PR)*
-- **Dataset markers:** *(to be added by Hema Varshini Palpandian via PR; deduplicated into consolidated list on merge)*
+### 6. Hema Varshini Palpandian — Tamil (`ind-ta-sangraha-v`)
+
+- **Pack / Language / Source:** `ind-ta-sangraha-v` / Tamil (`ta`; source split `tam`) / `ai4bharat/sangraha`, Verified Tamil subset.
+- **Marker scan (27 October 2026):** Scanned all 500 documents, with no null text. No matches for the 256 token surfaces in the list used for this scan or the tested chat/tool marker patterns. Two broader bracket-pattern matches were classified by a local context check as timezone annotations beside timestamps. These findings cover the automated checks on this sample.
+- **Unicode findings:** Tamil characters occur in all 500 documents. No ZWJ, ZWNJ, other format-control or private-use characters were detected.
+- **Text handling:** Preserve Tamil letters, vowel signs, pulli (`்`, U+0BCD), punctuation, line breaks, indentation and natural Tamil/English mixing. Preserve ZWJ/ZWNJ if encountered in other samples. Rendering should preserve the supplied text.
+- **New special-token request:** None based on this sample. The existing shared chat markers cover the identified structural needs. Language labels such as `ta` and `tam` remain plain text.
+- **Tool-result markers:** Use the shared `<|tool_result|>` and `<|/tool_result|>` markers, listed at slots `028` and `029` in the reviewed format. No duplicate markers are requested.
+
 
 ### 7. Lokesh Arundathi — Dataset section *(placeholder for PR to `g10-week1-post-training`)*
 

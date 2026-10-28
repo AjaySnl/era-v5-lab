@@ -72,13 +72,14 @@ Shared G10 licence file (`teams/10-post-training/licences/licence_table.md`).
 - **Licence:** *(TBD via PR)*
 - **Decision:** `TSAI reserves`
 
-### 6. Hema Varshini Palpandian — Dataset section *(placeholder for PR to `g10-week1-post-training`)*
+### 6. Hema Varshini Palpandian — Tamil (`ind-ta-sangraha-v`)
 
-- **Set:** *(TBD via PR)*
-- **Language:** *(TBD via PR)*
-- **Source:** *(TBD via PR)*
-- **Licence:** *(TBD via PR)*
-- **Decision:** `TSAI reserves`
+- **Set:** `ind-ta-sangraha-v`
+- **Language:** Tamil (`ta`; source split `tam`)
+- **Source:** `ai4bharat/sangraha`, Verified Tamil subset.
+- **Licence:** `CC-BY-4.0` — publisher-declared; permits commercial use with attribution, a licence link and notice of changes.
+- **Decision:** `TSAI reserves` — source checks and SFT/RL selection pending.
+- **Reading note:** 500 Tamil documents. No tested chat/tool markers found. Document URLs and the source release are missing from the sample; verify provenance before training.
 
 ### 7. Lokesh Arundathi — Dataset section *(placeholder for PR to `g10-week1-post-training`)*
 
