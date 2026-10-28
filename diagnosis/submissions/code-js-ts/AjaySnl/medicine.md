@@ -132,7 +132,7 @@ The official JavaScript/TypeScript gold set (≥ 200 documents reviewed by two r
 
 | Metric | Value |
 |---|---|
-| Proxy set | 66 documents labelled `clean` in the corrected first-150 diagnosis |
+| Proxy set | 233 documents labelled `clean` in the full-500 diagnosis |
 | Docs changed by `fix_b3()` | 0 |
 | Docs dropped by `fix_b3()` | 0 |
 | Percentage affected | 0.00% |
@@ -140,7 +140,7 @@ The official JavaScript/TypeScript gold set (≥ 200 documents reviewed by two r
 
 **What this proxy test does and does not cover:**
 
-The 66 proxy documents were labelled `clean` by automated scanning (every character checked by the detection functions). Per DISEASES.md, `read=partial` applies only when the reviewer does not read the language well; JavaScript and TypeScript impose no such barrier. All 66 proxy documents are marked `read=full`.
+The 233 proxy documents were labelled `clean` by automated scanning (every character checked by the detection functions). Per DISEASES.md, `read=partial` applies only when the reviewer does not read the language well; JavaScript and TypeScript impose no such barrier. All 233 proxy documents are marked `read=full`.
 
 The proxy test does **not** verify:
 - Whether `fix_b3()` correctly strips prefixes from the 258 B3 documents (the regression tests in §4a cover this).
@@ -200,7 +200,7 @@ The regex allows up to five consecutive metadata lines (`{1,5}`). If a rare docu
 
 ---
 
-*Medicine sheet complete for pack `code-js-ts`. Only B3 qualifies (258 > 5 occurrences). E1 has 4 occurrences in the first-150 diagnosis; E3 has 1. Neither reaches the 5-occurrence threshold for medicine in this slice. Full-pack E1 and E3 counts will be recalculated in the Oct 31 submission.*
+*Medicine sheet complete for pack `code-js-ts`. Only B3 qualifies (258 > 5 occurrences). E1 has 12 occurrences across all 500 docs; E3 has 1. Neither reaches the 5-occurrence threshold for medicine.*
 
 ---
 
@@ -210,17 +210,17 @@ The official taxonomy (DISEASES.md) lists 37 disease codes across groups A–H. 
 
 | Code | Method | Finding |
 |---|---|---|
-| A1 | Character scan, all 150 docs | 0 docs |
-| A2 | Character scan, all 150 docs | 0 docs |
-| A4 | U+FFFD scan, all 150 docs | 0 docs |
-| B3 | GHOST_RE regex scan, all 150 docs | 82 docs |
-| E1 | TypeScript compiler-signal regex + line-length heuristic | 4 docs |
+| A1 | Character scan, all 500 docs | 1 doc |
+| A2 | Character scan, all 500 docs | 0 docs |
+| A4 | U+FFFD scan, all 500 docs | 0 docs |
+| B3 | GHOST_RE regex scan, all 500 docs | 258 docs |
+| E1 | TypeScript compiler-signal regex + line-length heuristic + manual inspection | 12 docs |
 | E3 | Secret-pattern regex (type+offset only; no values recorded) | 1 doc |
-| H1 | MD5 fingerprint comparison across 150 docs | 0 duplicates |
+| H1 | MD5 fingerprint comparison across all 500 docs | 0 duplicates |
 
 The following codes were **not** checked systematically:
 
-- **A3** (mojibake): Broad pattern scan found 0 occurrences in first 500 chars of any document.
+- **A3** (mojibake): Broad pattern scan found 0 occurrences in first 500 chars of any of the 500 documents.
 - **A5, A6** (wrong normalisation form, mixed script): Not checked. Unlikely in GitHub JavaScript/TypeScript source.
 - **B1, B2** (HTML entities, raw HTML tags): Not checked. JSX/TSX legitimately contains HTML-like syntax; false-positive rate would be high without a parser.
 - **B4, B5** (template junk in prose, broken Markdown/LaTeX): Not applicable to a code pack.
@@ -233,7 +233,7 @@ The following codes were **not** checked systematically:
 - **F1** (personal data): Email scan found 0 real email addresses (all `<EMAIL>` tokens classified as B3). Phone numbers, addresses, and other PII not checked.
 - **F2, F3** (benchmark leakage, harmful content): Not checked; would require human judgment.
 - **G1–G4** (Indic script damage): Not applicable to a JS/TS pack.
-- **H2** (near-duplicates): Not checked. Same-text-length pairs in first 150 had ≤ 21% similarity by SequenceMatcher — below any reasonable near-duplicate threshold.
+- **H2** (near-duplicates): Not checked. Same-text-length pairs in the full 500 had no candidates flagged by MD5 (0 exact duplicates); near-duplicate comparison not performed.
 - **H3** (cross-source duplicates): Not checked.
 
-**Conclusion:** The diagnosis is comprehensive for B3, E1, E3, and H1. The remaining codes are either inapplicable to the JavaScript/TypeScript code-pack format, were ruled out by targeted checks, or remain unaudited. The submission does not claim comprehensive coverage of the full 37-code taxonomy.
+**Conclusion:** The diagnosis is comprehensive for A1, A2, A4, B3, E1, E3, and H1 across all 500 documents. The remaining codes are either inapplicable to the JavaScript/TypeScript code-pack format, were ruled out by targeted checks, or remain unaudited. The submission does not claim comprehensive coverage of the full 37-code taxonomy.
