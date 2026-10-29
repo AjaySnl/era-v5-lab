@@ -72,6 +72,11 @@ def test_special_tokens_v0_has_256_block_and_assigned_tokens():
     assert "not a special token" in doc.lower() or "Not a special token" in doc
     for token in EXPECTED_ASSIGNED:
         assert token in doc
+    assert "021 eval_fp_0" not in doc
+    assert "022 eval_fp_1" not in doc
+    assert "023 eval_fp_2" not in doc
+    assert "021" in doc and "023" in doc
+    assert "unused" in doc.lower()
 
 
 def test_chat_format_and_swe_e2e_exist_and_cover_effort_budgets():
@@ -93,5 +98,6 @@ def test_special_tokens_v1_if_present():
         assert "256" in doc
         assert "fim_prefix" in doc
         assert "subagent_call" in doc
-        assert "eval_fp_0" in doc
+        assert "021 eval_fp_0" not in doc
+        assert "unused" in doc.lower()
 

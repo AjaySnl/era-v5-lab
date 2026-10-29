@@ -8,13 +8,14 @@ Shared G10 special-token file (`teams/10-post-training/special-tokens/special_to
 - **Instructor ruling, 27 Oct:** special tokens only for structure that the model must never confuse with normal text (role-turn start and end, tool call start and end, tool result start and end, thinking start and end). Values inside that structure are plain text: tool names, arguments, effort level, options and settings. Keep the list short; the lead owns the final list and TSAI reviews it at the Gate.
 - **Every marker below must be one atomic special token** in the tokenizer, never split into subword pieces, and plain-text tags like `<think>` or `<tool_call>` are rejected.
 - **256 reserved token IDs (`0..255`):** G3 reserves the full 256-ID block. Assigned IDs below are frozen; unassigned IDs in `0..255` are reserved (`<|reserved_003|>` .. `<|reserved_255|>`).
+- **TSAI decision for v0:** do not add `<|eval_fp_*|>` special tokens. IDs `021` to `023` stay reserved and unused. A fingerprint is a plain-text canary that Team 9 places in eval data. A special token cannot appear in ordinary text, so the contamination check would find nothing. If Team 9 later needs a reserved ID, these three IDs are free.
 - **Security & token smuggling defense (G3 Tokenizer guidance):**
   - **Unicode Normalization:** Pre-tokenization pipeline must enforce Unicode NFKC normalization to prevent homoglyph attacks (e.g., Cyrillic or fullwidth `<｜think｜>`) from smuggling past prompt filters.
-  - **Roadmap for reserved slots (`003..023`, `030..255`):**
+  - **Roadmap for reserved slots (`003..009`, `016..023`, `030..255`):**
     - Code Infilling (FIM): Slots `010..012` allocated for `<|fim_prefix|>`, `<|fim_middle|>`, `<|fim_suffix|>` for agentic surgical code repairs.
     - Repository Context: Slots `013..014` allocated for `<|repo_name|>`, `<|file_sep|>` for multi-file workspace mapping.
     - Delegation: Slots `015`, `020` allocated for sub-agent invocation (`<|subagent_call|>`, `<|subagent_return|>`).
-    - Evaluation Fingerprints: Slots `021..023` reserved for Team 9 (G9) fingerprints due 28 Oct.
+    - IDs `021` to `023` stay reserved and unused. Do not assign them to an eval fingerprint token.
 
 ## Team workflow (Core Team · 12 members)
 
@@ -41,9 +42,6 @@ TSAI reserves 256 token IDs (`0..255`). Every chat marker below is registered as
 | `014` | `file_sep` | `<\|file_sep\|>` | Multi-file boundary delimiter in workspace repo map |
 | `015` | `subagent_call` | `<\|subagent_call\|>` | Sub-agent / delegation invocation boundary |
 | `020` | `subagent_return` | `<\|subagent_return\|>` | Sub-agent / delegation return boundary |
-| `021` | `eval_fp_0` | `<\|eval_fp_0\|>` | Evaluation fingerprint marker 0 (reserved for Team 9) |
-| `022` | `eval_fp_1` | `<\|eval_fp_1\|>` | Evaluation fingerprint marker 1 (reserved for Team 9) |
-| `023` | `eval_fp_2` | `<\|eval_fp_2\|>` | Evaluation fingerprint marker 2 (reserved for Team 9) |
 | `024` | `think` | `<\|think\|>` | Start of reasoning trace (1 special token, never plain `<think>`) |
 | `025` | `think_end` | `<\|/think\|>` | End of reasoning trace (1 special token, never plain `</think>`) |
 | `026` | `tool_call` | `<\|tool_call\|>` | Start of tool call JSON payload (1 special token) |
@@ -64,9 +62,6 @@ Machine-readable list of assigned markers for G3 (`ID Name Surface`):
 014 file_sep <|file_sep|>
 015 subagent_call <|subagent_call|>
 020 subagent_return <|subagent_return|>
-021 eval_fp_0 <|eval_fp_0|>
-022 eval_fp_1 <|eval_fp_1|>
-023 eval_fp_2 <|eval_fp_2|>
 024 think <|think|>
 025 think_end <|/think|>
 026 tool_call <|tool_call|>
@@ -75,7 +70,7 @@ Machine-readable list of assigned markers for G3 (`ID Name Surface`):
 029 tool_result_end <|/tool_result|>
 ```
 
-All remaining 237 IDs in `0..255` (`003..009`, `016..019`, `030..255`) are reserved by TSAI as `<|reserved_003|>` through `<|reserved_255|>`.
+All remaining 240 IDs in `0..255` (`003..009`, `016..019`, `021..023`, `030..255`) are reserved by TSAI as `<|reserved_003|>` through `<|reserved_255|>`. IDs `021` to `023` stay unused.
 
 ### Effort levels (plain text, not tokens)
 
@@ -145,11 +140,8 @@ The budget covers the think span and the tool trace. It does not cover the visib
   - **Sub-Agent Delegation (Slots `015`, `020`):**
     - `015 subagent_call <|subagent_call|>`: Multi-agent delegation invocation.
     - `020 subagent_return <|subagent_return|>`: Multi-agent response boundary.
-  - **Evaluation Fingerprints (Slots `021..023`):**
-    - `021 eval_fp_0 <|eval_fp_0|>`: Reserved benchmark fingerprint token 0 for Team 9.
-    - `022 eval_fp_1 <|eval_fp_1|>`: Reserved benchmark fingerprint token 1 for Team 9.
-    - `023 eval_fp_2 <|eval_fp_2|>`: Reserved benchmark fingerprint token 2 for Team 9.
-  - **Decision:** `TSAI reserves`. All remaining unassigned slots (`003..009`, `016..019`, `030..255`) remain reserved `<|reserved_NNN|>`.
+  - **Evaluation fingerprints:** not registered. TSAI decision for v0: do not add `<|eval_fp_*|>`. IDs `021` to `023` stay reserved and unused. Team 9 keeps any canary as a plain-text string in eval data.
+  - **Decision:** `TSAI reserves`. All remaining unassigned slots (`003..009`, `016..023`, `030..255`) remain reserved `<|reserved_NNN|>`.
 
 ### 4. Anirudh Narla — Dataset section *(placeholder for PR to `g10-week1-post-training`)*
 

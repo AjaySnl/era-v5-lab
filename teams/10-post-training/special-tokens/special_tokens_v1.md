@@ -35,9 +35,6 @@ TSAI reserves 256 token IDs (`000..255`).
 | `014` | `file_sep` | `<\|file_sep\|>` | Multi-file boundary delimiter in workspace repo map |
 | `015` | `subagent_call` | `<\|subagent_call\|>` | Sub-agent / delegation invocation boundary |
 | `020` | `subagent_return` | `<\|subagent_return\|>` | Sub-agent / delegation return boundary |
-| `021` | `eval_fp_0` | `<\|eval_fp_0\|>` | Evaluation fingerprint marker 0 (reserved for Team 9) |
-| `022` | `eval_fp_1` | `<\|eval_fp_1\|>` | Evaluation fingerprint marker 1 (reserved for Team 9) |
-| `023` | `eval_fp_2` | `<\|eval_fp_2\|>` | Evaluation fingerprint marker 2 (reserved for Team 9) |
 | `024` | `think` | `<\|think\|>` | Start of Chain-of-Thought reasoning trace |
 | `025` | `think_end` | `<\|/think\|>` | End of Chain-of-Thought reasoning trace |
 | `026` | `tool_call` | `<\|tool_call\|>` | Start of structured JSON tool call payload |
@@ -45,7 +42,7 @@ TSAI reserves 256 token IDs (`000..255`).
 | `028` | `tool_result` | `<\|tool_result\|>` | Start of tool execution output (untrusted environment) |
 | `029` | `tool_result_end` | `<\|/tool_result\|>` | End of tool execution output (untrusted environment) |
 
-All remaining IDs in `000..255` (`003..009`, `016..019`, `030..255`) are reserved by TSAI as `<|reserved_NNN|>`.
+All remaining IDs in `000..255` (`003..009`, `016..019`, `021..023`, `030..255`) are reserved by TSAI as `<|reserved_NNN|>`. IDs `021` to `023` stay reserved and unused. Do not add `<|eval_fp_*|>`. A fingerprint stays a plain-text canary in Team 9 eval data.
 
 ---
 
@@ -62,9 +59,6 @@ All remaining IDs in `000..255` (`003..009`, `016..019`, `030..255`) are reserve
 014 file_sep <|file_sep|>
 015 subagent_call <|subagent_call|>
 020 subagent_return <|subagent_return|>
-021 eval_fp_0 <|eval_fp_0|>
-022 eval_fp_1 <|eval_fp_1|>
-023 eval_fp_2 <|eval_fp_2|>
 024 think <|think|>
 025 think_end <|/think|>
 026 tool_call <|tool_call|>
@@ -73,7 +67,7 @@ All remaining IDs in `000..255` (`003..009`, `016..019`, `030..255`) are reserve
 029 tool_result_end <|/tool_result|>
 ```
 
-Unassigned slots `003..009`, `016..019`, and `030..255` are mapped to:
+Unassigned slots `003..009`, `016..023`, and `030..255` are mapped to:
 ```text
 003 reserved_003 <|reserved_003|>
 ...
