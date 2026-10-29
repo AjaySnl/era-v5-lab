@@ -97,6 +97,7 @@ def test_special_tokens_v1_if_present():
         doc = path.read_text(encoding="utf-8")
         assert "256" in doc
         assert "fim_prefix" in doc
+        assert "fim_pad" in doc
         assert "subagent_call" in doc
         assert "021 eval_fp_0" not in doc
         assert "unused" in doc.lower()
