@@ -34,6 +34,7 @@ TSAI reserves 256 token IDs (`000..255`).
 | `013` | `repo_name` | `<\|repo_name\|>` | Repository / package identifier anchor in multi-file context |
 | `014` | `file_sep` | `<\|file_sep\|>` | Multi-file boundary delimiter in workspace repo map |
 | `015` | `subagent_call` | `<\|subagent_call\|>` | Sub-agent / delegation invocation boundary |
+| `016` | `fim_pad` | `<\|fim_pad\|>` | Fill-In-The-Middle padding token for batched infilling sequences |
 | `020` | `subagent_return` | `<\|subagent_return\|>` | Sub-agent / delegation return boundary |
 | `024` | `think` | `<\|think\|>` | Start of Chain-of-Thought reasoning trace |
 | `025` | `think_end` | `<\|/think\|>` | End of Chain-of-Thought reasoning trace |
@@ -42,7 +43,7 @@ TSAI reserves 256 token IDs (`000..255`).
 | `028` | `tool_result` | `<\|tool_result\|>` | Start of tool execution output (untrusted environment) |
 | `029` | `tool_result_end` | `<\|/tool_result\|>` | End of tool execution output (untrusted environment) |
 
-All remaining IDs in `000..255` (`003..009`, `016..019`, `021..023`, `030..255`) are reserved by TSAI as `<|reserved_NNN|>`. IDs `021` to `023` stay reserved and unused. Do not add `<|eval_fp_*|>`. A fingerprint stays a plain-text canary in Team 9 eval data.
+All remaining IDs in `000..255` (`003..009`, `017..019`, `021..023`, `030..255`) are reserved by TSAI as `<|reserved_NNN|>`. IDs `021` to `023` stay reserved and unused. Do not add `<|eval_fp_*|>`. A fingerprint stays a plain-text canary in Team 9 eval data.
 
 ---
 
@@ -58,6 +59,7 @@ All remaining IDs in `000..255` (`003..009`, `016..019`, `021..023`, `030..255`)
 013 repo_name <|repo_name|>
 014 file_sep <|file_sep|>
 015 subagent_call <|subagent_call|>
+016 fim_pad <|fim_pad|>
 020 subagent_return <|subagent_return|>
 024 think <|think|>
 025 think_end <|/think|>
@@ -67,7 +69,7 @@ All remaining IDs in `000..255` (`003..009`, `016..019`, `021..023`, `030..255`)
 029 tool_result_end <|/tool_result|>
 ```
 
-Unassigned slots `003..009`, `016..023`, and `030..255` are mapped to:
+Unassigned slots `003..009`, `017..023`, and `030..255` are mapped to:
 ```text
 003 reserved_003 <|reserved_003|>
 ...

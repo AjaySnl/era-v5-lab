@@ -11,8 +11,8 @@ Shared G10 special-token file (`teams/10-post-training/special-tokens/special_to
 - **TSAI decision for v0:** do not add `<|eval_fp_*|>` special tokens. IDs `021` to `023` stay reserved and unused. A fingerprint is a plain-text canary that Team 9 places in eval data. A special token cannot appear in ordinary text, so the contamination check would find nothing. If Team 9 later needs a reserved ID, these three IDs are free.
 - **Security & token smuggling defense (G3 Tokenizer guidance):**
   - **Unicode Normalization:** Pre-tokenization pipeline must enforce Unicode NFKC normalization to prevent homoglyph attacks (e.g., Cyrillic or fullwidth `<｜think｜>`) from smuggling past prompt filters.
-  - **Roadmap for reserved slots (`003..009`, `016..023`, `030..255`):**
-    - Code Infilling (FIM): Slots `010..012` allocated for `<|fim_prefix|>`, `<|fim_middle|>`, `<|fim_suffix|>` for agentic surgical code repairs.
+  - **Roadmap for reserved slots (`003..009`, `017..023`, `030..255`):**
+    - Code Infilling (FIM): Slots `010..012` allocated for `<|fim_prefix|>`, `<|fim_middle|>`, `<|fim_suffix|>` for agentic surgical code repairs; slot `016` holds `<|fim_pad|>` (instructor, 28 Oct: reserve all four FIM tokens).
     - Repository Context: Slots `013..014` allocated for `<|repo_name|>`, `<|file_sep|>` for multi-file workspace mapping.
     - Delegation: Slots `015`, `020` allocated for sub-agent invocation (`<|subagent_call|>`, `<|subagent_return|>`).
     - IDs `021` to `023` stay reserved and unused. Do not assign them to an eval fingerprint token.
@@ -41,6 +41,7 @@ TSAI reserves 256 token IDs (`0..255`). Every chat marker below is registered as
 | `013` | `repo_name` | `<\|repo_name\|>` | Repository / package identifier anchor in multi-file context |
 | `014` | `file_sep` | `<\|file_sep\|>` | Multi-file boundary delimiter in workspace repo map |
 | `015` | `subagent_call` | `<\|subagent_call\|>` | Sub-agent / delegation invocation boundary |
+| `016` | `fim_pad` | `<\|fim_pad\|>` | Fill-In-The-Middle padding token for batched infilling sequences |
 | `020` | `subagent_return` | `<\|subagent_return\|>` | Sub-agent / delegation return boundary |
 | `024` | `think` | `<\|think\|>` | Start of reasoning trace (1 special token, never plain `<think>`) |
 | `025` | `think_end` | `<\|/think\|>` | End of reasoning trace (1 special token, never plain `</think>`) |
@@ -61,6 +62,7 @@ Machine-readable list of assigned markers for G3 (`ID Name Surface`):
 013 repo_name <|repo_name|>
 014 file_sep <|file_sep|>
 015 subagent_call <|subagent_call|>
+016 fim_pad <|fim_pad|>
 020 subagent_return <|subagent_return|>
 024 think <|think|>
 025 think_end <|/think|>
@@ -70,11 +72,11 @@ Machine-readable list of assigned markers for G3 (`ID Name Surface`):
 029 tool_result_end <|/tool_result|>
 ```
 
-All remaining 240 IDs in `0..255` (`003..009`, `016..019`, `021..023`, `030..255`) are reserved by TSAI as `<|reserved_003|>` through `<|reserved_255|>`. IDs `021` to `023` stay unused.
+All remaining 239 IDs in `0..255` (`003..009`, `017..019`, `021..023`, `030..255`) are reserved by TSAI as `<|reserved_003|>` through `<|reserved_255|>`. IDs `021` to `023` stay unused.
 
 ### Effort levels (plain text, not tokens)
 
-Effort is a plain-text line at the top of the first system turn: `Reasoning effort: {level}`. IDs `016..019` are free again and stay reserved.
+Effort is a plain-text line at the top of the first system turn: `Reasoning effort: {level}`. IDs `017..019` are free again and stay reserved (`016` is `<|fim_pad|>`).
 
 - `1k`: 1024 tokens
 - `4k`: 4096 tokens
@@ -134,6 +136,7 @@ The budget covers the think span and the tool trace. It does not cover the visib
     - `010 fim_prefix <|fim_prefix|>`: Code infilling prefix context anchor.
     - `011 fim_middle <|fim_middle|>`: Infilling generation slot.
     - `012 fim_suffix <|fim_suffix|>`: Suffix context anchor.
+    - `016 fim_pad <|fim_pad|>`: FIM padding token (added after the instructor approved all four FIM tokens; not part of the original PR #5 allocation).
   - **Repository & Workspace Context (Slots `013..014`):**
     - `013 repo_name <|repo_name|>`: Multi-file repository boundary.
     - `014 file_sep <|file_sep|>`: Multi-file separation delimiter.
@@ -141,7 +144,7 @@ The budget covers the think span and the tool trace. It does not cover the visib
     - `015 subagent_call <|subagent_call|>`: Multi-agent delegation invocation.
     - `020 subagent_return <|subagent_return|>`: Multi-agent response boundary.
   - **Evaluation fingerprints:** not registered. TSAI decision for v0: do not add `<|eval_fp_*|>`. IDs `021` to `023` stay reserved and unused. Team 9 keeps any canary as a plain-text string in eval data.
-  - **Decision:** `TSAI reserves`. All remaining unassigned slots (`003..009`, `016..023`, `030..255`) remain reserved `<|reserved_NNN|>`.
+  - **Decision:** `TSAI reserves`. All remaining unassigned slots (`003..009`, `017..023`, `030..255`) remain reserved `<|reserved_NNN|>`.
 
 ### 4. Anirudh Narla — Dataset section *(placeholder for PR to `g10-week1-post-training`)*
 
