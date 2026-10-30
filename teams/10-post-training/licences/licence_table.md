@@ -81,13 +81,13 @@ Shared G10 licence file (`teams/10-post-training/licences/licence_table.md`).
 - **Decision:** `TSAI reserves` — source checks and SFT/RL selection pending.
 - **Reading note:** 500 Tamil documents. No tested chat/tool markers found. Document URLs and the source release are missing from the sample; verify provenance before training.
 
-### 7. Lokesh Arundathi — Dataset section *(placeholder for PR to `g10-week1-post-training`)*
+### 7. Lokesh Arundathi — Kannada (`ind-kn-fw2`)
 
-- **Set:** *(TBD via PR)*
-- **Language:** *(TBD via PR)*
-- **Source:** *(TBD via PR)*
-- **Licence:** *(TBD via PR)*
-- **Decision:** `TSAI reserves`
+- **Set:** `ind-kn-fw2`
+- **Language:** Kannada (`kn`)
+- **Source:** `HuggingFaceFW/fineweb-2` (Hugging Face, 2024; Common Crawl curated web pipeline)
+- **Licence:** `ODC-By v1.0` (Open Data Commons Attribution License v1.0). Commercial use is explicitly permitted with attribution.
+- **Decision:** `TSAI reserves` — commercial-use only rule satisfied. Attribution requirement to be fulfilled in the public model card and training datasheet.
 
 ### 8. gmrammohan15 — Indic web (`ind-hi-hplt` · HPLT 3.0 `hin_Deva`)
 

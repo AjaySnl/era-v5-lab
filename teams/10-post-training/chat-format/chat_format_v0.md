@@ -197,3 +197,58 @@ UTF-8 में लिखा गया: 4 code points।
 ### Executed Hindi SWE task (Docker)
 
 See `results/hindi_swe_e2e.md`, `swe-task/run_hindi_e2e.py` and `swe-task/Dockerfile.hindi`. A `prepare_text()` written to the v1 pre-tokenization rule fails 4 of 6 Hindi tests. The repair keeps ZWJ/ZWNJ, drops NFKC and still removes `U+200B`, so all 6 pass. The trajectory has think spans and round-trips exactly at all four effort levels. It ran in Docker with no network. This is an authored smoke task, not a SWE-bench score or a model-generated trajectory.
+
+## Kannada application — `ind-kn-fw2`
+
+Lokesh Arundathi — Kannada (`kn`), `HuggingFaceFW/fineweb-2`. The following conversation and SWE task are authored demonstrations, not extracted training rows.
+
+- Use the existing roles and nine chat markers. Kannada, `kn`, tool names, JSON values and effort levels remain plain text. No new special tokens are requested.
+- Preserve supplied UTF-8 code points, vowel sequences, whitespace and natural Kannada/English mixing without normalization.
+
+### Authored Kannada example
+
+Run from the repository root. The Python escape inserts an actual ZWNJ.
+
+```python
+from runpy import run_path
+
+chat = run_path("teams/10-post-training/chat-format/render.py")
+messages = [
+    {"role": "system", "content": "ಕನ್ನಡದಲ್ಲಿ ಉತ್ತರಿಸಿ."},
+    {"role": "user", "content": "ಒನ್\u200cಪ್ಲಸ್"},
+    {"role": "assistant", "think": "ಪಠ್ಯವನ್ನು ಬದಲಿಸಬಾರದು.",
+     "tool_calls": [{"name": "write_text", "arguments": {
+         "path": "ಕನ್ನಡ.txt", "text": "ಒನ್\u200cಪ್ಲಸ್"}}]},
+    {"role": "tool", "content": "ಉಳಿಸಲಾಗಿದೆ."},
+    {"role": "assistant", "content": "ಉಳಿಸಲಾಗಿದೆ."},
+]
+text = chat["render"](messages, effort="4k")
+assert chat["parse"](text) == {"effort": "4k", "messages": messages}
+print(text)
+```
+
+```text
+<|im_start|>system
+Reasoning effort: 4k
+
+ಕನ್ನಡದಲ್ಲಿ ಉತ್ತರಿಸಿ.<|im_end|>
+<|im_start|>user
+ಒನ್‌ಪ್ಲಸ್<|im_end|>
+<|im_start|>assistant
+<|think|>
+ಪಠ್ಯವನ್ನು ಬದಲಿಸಬಾರದು.
+<|/think|>
+<|tool_call|>
+{"arguments":{"path":"ಕನ್ನಡ.txt","text":"ಒನ್‌ಪ್ಲಸ್"},"name":"write_text"}
+<|/tool_call|>
+<|im_end|>
+<|im_start|>tool
+<|tool_result|>
+ಉಳಿಸಲಾಗಿದೆ.
+<|/tool_result|><|im_end|>
+<|im_start|>assistant
+ಉಳಿಸಲಾಗಿದೆ.<|im_end|>
+<|endoftext|>
+```
+
+SWE and browser verification results are recorded in [the Kannada report](../results/kannada_swe_e2e.md). Joiner sequences are documented in the Kannada section of [the special-token notes](../special-tokens/special_tokens_v0.md).
