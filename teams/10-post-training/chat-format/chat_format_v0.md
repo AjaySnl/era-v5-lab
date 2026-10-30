@@ -140,3 +140,36 @@ Current v0 rejects literal control markers inside message content and normalizes
 ### Executed Tamil SWE task
 
 See `results/tamil_swe_e2e.md` and `swe-task/run_tamil_e2e.py`: a local UTF-8 file-writing bug, an actual failing test, a patch, an actual passing test and a fully round-tripped Tamil tool trajectory. This authored smoke task establishes the local serialization and tool-observation path; it is not an external SWE-bench score or a model-training run.
+
+## Go application: `code-go`
+
+The existing format and `render.py` apply to Go source without language-specific tokens. The example is a newly authored demonstration, not a row from the `code-go` pack and not an approved training row.
+
+- Go source goes in message content and in tool-call JSON string values. `gofmt` tabs, CRLF line endings, backticks and the channel operator `<-` are preserved exactly; `render.py` does not reformat or normalize code.
+- A literal control marker inside Go source (for example `s := "<|im_start|>"` or `s := "<think>"`) is rejected by `render.py` at the input boundary, as for any other content. A real Go file with such a string must be dropped or escaped by the data step before it is rendered. This is an open point for the lead and TSAI; it is not decided here.
+- StarCoder metadata markers (`<reponame>`, `<filename>`, `<gh_stars>`) are not chat markers, so the renderer treats them as ordinary text. They are removed upstream by the cleaning medicine for B3, so they should never reach a rendered transcript.
+- Same roles, same nine markers, effort stays the plain line `Reasoning effort: {level}`. For SFT, mask system and user content and tool observations; supervise assistant replies and assistant tool calls (a proposed policy: `render.py` emits strings, not loss masks).
+
+Rendered excerpt (effort `4k`), a tool turn that returns Go source:
+
+```text
+<|im_start|>tool
+<|tool_result|>
+// Package stats holds the small Go function used for the G10 Go SWE task.
+package stats
+
+// Sum returns the total of nums.
+func Sum(nums []int) int {
+	total := 0
+	for i := 1; i < len(nums); i++ {
+		total += nums[i]
+	}
+	return total
+}
+
+<|/tool_result|><|im_end|>
+```
+
+### Executed Go SWE task
+
+See `results/go_swe_e2e.md`, `swe-task-go/` and `tests/test_go_chat_format.py`: a Go off-by-one bug in `Sum`, an actual failing `go test`, a patch, an actual passing `go test` and `go vet`, run in an air-gapped Docker container, and a 7-turn trajectory rendered and parsed with `render.py`. This is an authored smoke task, not an external SWE-bench score or a model-training run.
