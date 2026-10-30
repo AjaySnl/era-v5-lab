@@ -81,6 +81,6 @@ Unassigned slots `003..009`, `017..023`, and `030..255` are mapped to:
 ## 4. Dataset Pre-Training Sanity & Ghost Token Action
 
 1. **StarCoder (`code-python` · Sai Teja)**: Strip upstream `B3` ghost tokens (`[INST]`, `[/INST]`, `<think>`, `### Assistant:`) during pre-processing so raw control markers are never learned from pre-training code comments.
-2. **HPLT 3.0 (`ind-hi-hplt` · Rammohan)**: Verified clean. Devanagari script joiners `U+200D` (ZWJ) and `U+200C` (ZWNJ) retained as natural script characters.
+2. **HPLT 3.0 (`ind-hi-hplt` · gmrammohan15)**: Verified clean. Devanagari script joiners `U+200D` (ZWJ) and `U+200C` (ZWNJ) retained as natural script characters.
 3. **IndicCorpV2 (`ind-hi-indiccorp` · Ranjani)**: Verified clean. No ghost tokens found.
 4. **FineWeb-2 Marathi (`ind-mr-fw2` · Amit T)**: Verified clean. Zero ghost tokens. ZWJ/ZWNJ preserved for Marathi orthography (`ऱ्या`, conjuncts).
