@@ -24,6 +24,46 @@ Kannada chat serialization and browser output are verified using the shared
 Character preservation is checked automatically; visual appearance was checked
 separately in the browser. The shared renderer and token allocation are unchanged.
 
+## SWE before and after
+
+The runner deliberately introduces a faulty version of `prepare_text()` in a
+temporary copy. It measures the failure, applies the patch and reruns the tests.
+The checked-in helper stays unchanged throughout the demonstration.
+
+**Before:** the temporary helper applies NFKC and removes ZWNJ (`U+200C`) and
+ZWJ (`U+200D`), in addition to ZWSP/BOM. This changes supplied text and removes
+the distinction between the RA sequences.
+
+**After:** the patched helper removes only ZWSP (`U+200B`) and BOM (`U+FEFF`).
+It preserves the remaining code points and their order without normalization.
+
+```diff
+-STRIP = frozenset({"\u200b", "\u200c", "\u200d", "\ufeff"})
++STRIP = frozenset({"\u200b", "\ufeff"})
+-    return "".join(ch for ch in unicodedata.normalize("NFKC", text) if ch not in STRIP)
++    return "".join(ch for ch in text if ch not in STRIP)
+```
+
+| Input | Before patch | After patch |
+| --- | --- | --- |
+| `ಒನ್‌ಪ್ಲಸ್`, containing ZWNJ | ZWNJ removed: `ಒನ್ಪ್ಲಸ್` | Original ZWNJ preserved |
+| RA + ZWJ + virama + KA | ZWJ removed: RA + virama + KA | Original order preserved |
+| RA + virama + ZWJ + KA | ZWJ removed: RA + virama + KA | Original order preserved |
+| Mixed text containing `10²` | NFKC changes it to `102` | `10²` preserved |
+
+The text-preservation test fails before the patch because these outputs differ
+from the original inputs. The control-removal/marker test already passes: ZWSP
+and BOM are removed, and a marker hidden with ZWSP is exposed for rejection by
+the renderer. The patch preserves that behavior while fixing text preservation.
+
+| Stage | Passed | Failed | Errors |
+| --- | --- | --- | --- |
+| Before patch | 1 | 1 | 0 |
+| After patch | 2 | 0 | 0 |
+
+These outcomes were verified locally and in Docker. Actual file contents, test
+output and patch observations form the recorded Kannada tool trajectory.
+
 ## Reproduce
 
 From the repository root:
