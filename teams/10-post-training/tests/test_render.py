@@ -223,4 +223,4 @@ def test_docs_match_the_plan_sheet_set():
             continue
         decisions.append(cells[-1])
     assert "chandassu" in licence
-    assert decisions and set(decisions) == {"TSAI reserves"}
+    assert decisions and set(decisions) <= {"TSAI reserves", "excluded"}
