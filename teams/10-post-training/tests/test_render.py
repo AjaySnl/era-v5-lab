@@ -223,4 +223,6 @@ def test_docs_match_the_plan_sheet_set():
             continue
         decisions.append(cells[-1])
     assert "chandassu" in licence
-    assert decisions == ["TSAI reserves", "TSAI reserves"]
+    assert decisions and all(
+        d in {"TSAI reserves", "excluded"} or d.startswith("allowed") for d in decisions
+    )

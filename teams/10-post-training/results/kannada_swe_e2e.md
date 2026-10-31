@@ -13,7 +13,7 @@ Kannada chat serialization and browser output are verified using the shared
 
 ## Verified results
 
-- All 26 G10 tests passed.
+- All 31 G10 tests passed (27 existing + 4 new Kannada tests).
 - Local and Docker SWE runs had one failing test before the patch and both tests
   passed afterward.
 - The 11-message trajectory round-tripped at `1k`, `4k`, `16k` and `64k`.
