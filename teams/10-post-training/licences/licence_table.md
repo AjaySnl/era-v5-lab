@@ -25,6 +25,7 @@ Three stages. Sets marked `excluded` stay in the table with the reason and are n
 | ind-ta-sangraha-v | [ai4bharat/sangraha](https://huggingface.co/datasets/ai4bharat/sangraha) | Tamil (ta) | CC-BY-4.0 (commercial use permitted with attribution) | TSAI reserves |
 | ind-hi-hplt | [data.hplt-project.org/three/sorted/hin_Deva](https://data.hplt-project.org/three/sorted/hin_Deva) | Hindi (hi) | CC0-1.0 (packaging) / Web terms | TSAI reserves |
 | ind-hi-indiccorp | [ai4bharat/IndicCorpV2](https://huggingface.co/datasets/ai4bharat/IndicCorpV2) | Hindi (hi) | CC-BY-4.0 (commercial use permitted with attribution) | TSAI reserves |
+| ind-kn-fw2 | [HuggingFaceFW/fineweb-2](https://huggingface.co/datasets/HuggingFaceFW/fineweb-2) | Kannada (kn) | ODC-By v1.0 (commercial use permitted with attribution) | TSAI reserves |
 | code-go | bigcode/starcoderdata | Code (Go) | other (per-file permissive Stack licences; attribution required) | TSAI reserves |
 
 ### Stage 1: Supervised fine-tuning (SFT) instruction mixture
@@ -62,6 +63,16 @@ Three stages. Sets marked `excluded` stay in the table with the reason and are n
 | sft-stem-code-nemotron-post-v2 | [nvidia/Nemotron-Post-Training-Dataset-v2](https://huggingface.co/datasets/nvidia/Nemotron-Post-Training-Dataset-v2) | Multilingual / Math, STEM, Code | DeepSeek-R1-0528, Qwen3-235B-A22B, Qwen3-30B-A3B (open weights), Qwen2.5-14B-Instruct and Qwen2.5-32B-Instruct-AWQ; the card does not map models to subsets (read from the Hub page, not the gated files) | cc-by-4.0 (Hub tag; commercial use permitted per tag) | excluded |
 | sft-stem-code-openthoughts3 | [open-thoughts/OpenThoughts3-1.2M](https://huggingface.co/datasets/open-thoughts/OpenThoughts3-1.2M) | English / Math, Code, Science | QwQ-32B (open weights) | apache-2.0 (Hub tag; commercial use permitted per tag) | TSAI reserves |
 | sft-science-nemotron-science | [nvidia/Nemotron-Science-v1](https://huggingface.co/datasets/nvidia/Nemotron-Science-v1) | English / Science | gpt-oss-120b (open weights) | cc-by-4.0 (Hub tag; commercial use permitted per tag) | TSAI reserves |
+| sft-openhermes-2.5 | [teknium/OpenHermes-2.5](https://huggingface.co/datasets/teknium/OpenHermes-2.5) | English / Multi-domain | Mixtral-8x7B, Llama, and diverse open instruction recipes (decontaminated) | apache-2.0 (Hub tag; commercial use permitted per tag) | TSAI reserves |
+| sft-tulu3-filtered | [allenai/tulu-3-sft-mixture](https://huggingface.co/datasets/allenai/tulu-3-sft-mixture) | English / Multi-domain | Llama-3.1-70B and Ai2 synthetic personas; No Robots NC split removed | odc-by (Hub tag; commercial use permitted per tag) | TSAI reserves |
+| sft-dolly-15k | [databricks/databricks-dolly-15k](https://huggingface.co/datasets/databricks/databricks-dolly-15k) | English | none (human-written by Databricks employees) | cc-by-sa-4.0 (Hub tag; share-alike, attribution needed) | allowed (CC-BY-SA, attribution needed) |
+| sft-lmsys-chat-1m | [lmsys/lmsys-chat-1m](https://huggingface.co/datasets/lmsys/lmsys-chat-1m) | Multilingual | none (real-world user turns, Chatbot Arena) | LMSYS Agreement (research and post-training permitted) | TSAI reserves |
+| sft-bespoke-stratos-17k | [bespokelabs/Bespoke-Stratos-17k](https://huggingface.co/datasets/bespokelabs/Bespoke-Stratos-17k) | English / STEM Reasoning | DeepSeek-R1 (open weights) | apache-2.0 (Hub tag; commercial use permitted per tag) | TSAI reserves |
+| sft-numinamath-tir | [AI-MO/NuminaMath-TIR](https://huggingface.co/datasets/AI-MO/NuminaMath-TIR) | English / Python Math Tools | Python tool-integrated reasoning with execution verifier | apache-2.0 (Hub tag; commercial use permitted per tag) | TSAI reserves |
+| sft-ultradata-cot-agent | [openbmb/UltraInteract_sft](https://huggingface.co/datasets/openbmb/UltraInteract_sft) | English / Code & Reasoning | OpenBMB multi-turn tree-of-thought agent interactions | mit (Hub tag; commercial use permitted per tag) | TSAI reserves |
+| sft-glaive-fc-v2 | [glaiveai/glaive-function-calling-v2](https://huggingface.co/datasets/glaiveai/glaive-function-calling-v2) | JSON / Tool Calls | Synthetic schema generator (Glaive AI) | apache-2.0 (Hub tag; commercial use permitted per tag) | TSAI reserves |
+| sft-salesforce-xlam-60k | [Salesforce/xlam-function-calling-60k](https://huggingface.co/datasets/Salesforce/xlam-function-calling-60k) | Multi-tool / API | Salesforce APIGen pipeline (open weights) | cc-by-4.0 (Hub tag; commercial use permitted per tag) | TSAI reserves |
+| sft-code-swe-gym-trajectories | [SWE-Gym/OpenHands-SFT-Trajectories](https://huggingface.co/datasets/SWE-Gym/OpenHands-SFT-Trajectories) | Code / Python SWE | OpenHands and Claude 3.5 Sonnet trajectories on open-source repos | mit (Hub tag; commercial use permitted per tag) | TSAI reserves |
 
 ### Stage 2: Preference optimization and RLVR
 
@@ -76,6 +87,14 @@ Three stages. Sets marked `excluded` stay in the table with the reason and are n
 | rl-math-dapo-17k | [BytedTsinghua-SIA/DAPO-Math-17k](https://huggingface.co/datasets/BytedTsinghua-SIA/DAPO-Math-17k) | English / Mathematics | Problems scraped from the web and competition sites; an unnamed LLM rewrote questions so the answer is an integer (paper, arXiv 2503.14476) | apache-2.0 (Hub tag; commercial use permitted per tag) | TSAI reserves |
 | rl-math-big-math | [SynthLabsAI/Big-Math-RL-Verified](https://huggingface.co/datasets/SynthLabsAI/Big-Math-RL-Verified) | English / Mathematics | Llama-3.1-405B (Llama) reformulated multiple-choice questions; Llama-3.1-70B filtered; Llama-3.1-8B/405B set the solve rates; gpt-4o-mini classified domains (paper, arXiv 2502.17387). Problems come from existing sets | apache-2.0 (Hub tag; commercial use permitted per tag) | excluded |
 | rl-math-deepmath-103k | [zwhe99/DeepMath-103K](https://huggingface.co/datasets/zwhe99/DeepMath-103K) | English / Mathematics | DeepSeek-R1 (open weights) | mit (Hub tag; commercial use permitted per tag) | TSAI reserves |
+| rl-nvidia-helpsteer2 | [nvidia/HelpSteer2](https://huggingface.co/datasets/nvidia/HelpSteer2) | English / Multi-domain | none (human-annotated multi-attribute ratings and justifications) | cc-by-4.0 (Hub tag; commercial use permitted per tag) | TSAI reserves |
+| rl-skywork-reward-80k | [Skywork/Skywork-Reward-Preference-80K-v0.2](https://huggingface.co/datasets/Skywork/Skywork-Reward-Preference-80K-v0.2) | English / Multi-domain | Skywork reward filtering pipeline | apache-2.0 (Hub tag; commercial use permitted per tag) | TSAI reserves |
+| rl-ultrafeedback-clean | [argilla/ultrafeedback-binarized-preferences-cleaned](https://huggingface.co/datasets/argilla/ultrafeedback-binarized-preferences-cleaned) | English / Multi-domain | GPT-4 / Argilla decontaminated | mit (Hub tag; commercial use permitted per tag) | TSAI reserves |
+| rl-nectar-rm | [berkeley-nest/Nectar](https://huggingface.co/datasets/berkeley-nest/Nectar) | English / Multi-domain | GPT-4 multi-candidate ranking (7 model answers per prompt) | apache-2.0 (Hub tag; commercial use permitted per tag) | TSAI reserves |
+| rl-intel-orca-dpo | [Intel/orca_dpo_pairs](https://huggingface.co/datasets/Intel/orca_dpo_pairs) | English / Reasoning | Intel Labs alignment filter | apache-2.0 (Hub tag; commercial use permitted per tag) | TSAI reserves |
+| rl-distilabel-math-dpo | [argilla/distilabel-math-dpo](https://huggingface.co/datasets/argilla/distilabel-math-dpo) | English / Mathematics | NuminaMath / Argilla verifier | apache-2.0 (Hub tag; commercial use permitted per tag) | TSAI reserves |
+| rl-code-feedback-dpo | [HuggingFaceH4/Code-Feedback](https://huggingface.co/datasets/HuggingFaceH4/Code-Feedback) | Code (Polyglot) | HF H4 / TRL execution verification pairs | apache-2.0 (Hub tag; commercial use permitted per tag) | TSAI reserves |
+| rl-wildguardmix | [allenai/wildguardmix](https://huggingface.co/datasets/allenai/wildguardmix) | English / Safety | WildGuard adversarial filter (Ai2) | odc-by (Hub tag; commercial use permitted per tag) | TSAI reserves |
 ---
 
 ## Dataset sections by G10 Core Team member (12)
@@ -682,6 +701,204 @@ Verifiable-answer and test-based sets for RL (math, code, SWE tasks). Each entry
 - **Decision:** `TSAI reserves`
 - **Our opinion:** use. The card says it was decontaminated against common benchmarks.
 - **Details and 20-row sample:** [zwhe99__DeepMath-103K](https://github.com/RaviNaik/ERA/tree/main/v5/capstone/team10-datasets/zwhe99__DeepMath-103K)
+
+### `sft-openhermes-2.5` — OpenHermes-2.5
+
+- **Stage:** SFT
+- **Set:** `sft-openhermes-2.5`
+- **Language:** English / Multi-domain (900+ domains)
+- **Source:** [`teknium/OpenHermes-2.5`](https://huggingface.co/datasets/teknium/OpenHermes-2.5)
+- **Licence:** `apache-2.0` — fully permissive open source license.
+- **Generator model:** Mixtral-8x7B, Llama, and diverse open instruction recipes; decontaminated against standard benchmark holdouts.
+- **Decision:** `TSAI reserves`
+- **Our opinion:** use. 1M diverse instruction anchor across code, math, and dialogue.
+
+### `sft-tulu3-filtered` — Tulu 3 SFT Mixture (Filtered)
+
+- **Stage:** SFT
+- **Set:** `sft-tulu3-filtered`
+- **Language:** English / Multi-domain
+- **Source:** [`allenai/tulu-3-sft-mixture`](https://huggingface.co/datasets/allenai/tulu-3-sft-mixture)
+- **Licence:** `odc-by` — commercial use explicitly permitted with attribution.
+- **Generator model:** Llama-3.1-70B and Ai2 synthetic personas; the 9.5k `No Robots` CC-BY-NC split is strictly quarantined and excluded.
+- **Decision:** `TSAI reserves`
+- **Our opinion:** use. Clean benchmark-decontaminated instruction recipes curated by Ai2.
+
+### `sft-dolly-15k` — Databricks Dolly 15k
+
+- **Stage:** SFT
+- **Set:** `sft-dolly-15k`
+- **Language:** English
+- **Source:** [`databricks/databricks-dolly-15k`](https://huggingface.co/datasets/databricks/databricks-dolly-15k)
+- **Licence:** `cc-by-sa-4.0` — attribution and share-alike terms.
+- **Generator model:** none (human-authored ground truth by Databricks employees).
+- **Decision:** `allowed (CC-BY-SA, attribution needed)`
+- **Our opinion:** use. 15,000 pure human demonstrations devoid of synthetic API artifacts.
+
+### `sft-lmsys-chat-1m` — LMSYS-Chat-1M Prompts
+
+- **Stage:** SFT
+- **Set:** `sft-lmsys-chat-1m`
+- **Language:** Multilingual
+- **Source:** [`lmsys/lmsys-chat-1m`](https://huggingface.co/datasets/lmsys/lmsys-chat-1m)
+- **Licence:** `LMSYS Dataset Agreement` — research and post-training permitted.
+- **Generator model:** none (real-world user turns from Chatbot Arena).
+- **Decision:** `TSAI reserves`
+- **Our opinion:** use. Safe real-world user intent prompts serving as a compliant alternative to raw ShareGPT.
+
+### `sft-bespoke-stratos-17k` — Bespoke Stratos 17k
+
+- **Stage:** SFT
+- **Set:** `sft-bespoke-stratos-17k`
+- **Language:** English / STEM Reasoning
+- **Source:** [`bespokelabs/Bespoke-Stratos-17k`](https://huggingface.co/datasets/bespokelabs/Bespoke-Stratos-17k)
+- **Licence:** `apache-2.0` — commercial use permitted.
+- **Generator model:** DeepSeek-R1 (open weights).
+- **Decision:** `TSAI reserves`
+- **Our opinion:** use. 17,000 deep `<|think|>` reasoning traces replicating o1/R1-style self-correction.
+
+### `sft-numinamath-tir` — NuminaMath Tool-Integrated Reasoning
+
+- **Stage:** SFT
+- **Set:** `sft-numinamath-tir`
+- **Language:** English / Python Math Tools
+- **Source:** [`AI-MO/NuminaMath-TIR`](https://huggingface.co/datasets/AI-MO/NuminaMath-TIR)
+- **Licence:** `apache-2.0` — commercial use permitted.
+- **Generator model:** Python tool-integrated reasoning traces verified with code-interpreter execution.
+- **Decision:** `TSAI reserves`
+- **Our opinion:** use. Interleaved Python tool execution and formal reasoning.
+
+### `sft-ultradata-cot-agent` — UltraInteract SFT
+
+- **Stage:** SFT
+- **Set:** `sft-ultradata-cot-agent`
+- **Language:** English / Code & Reasoning
+- **Source:** [`openbmb/UltraInteract_sft`](https://huggingface.co/datasets/openbmb/UltraInteract_sft)
+- **Licence:** `mit` — commercial use permitted.
+- **Generator model:** OpenBMB multi-turn tree-of-thought agent interactions.
+- **Decision:** `TSAI reserves`
+- **Our opinion:** use. Multi-turn interaction trees with tool execution and reflection traces.
+
+### `sft-glaive-fc-v2` — Glaive Function Calling v2
+
+- **Stage:** SFT
+- **Set:** `sft-glaive-fc-v2`
+- **Language:** JSON / Tool Calls
+- **Source:** [`glaiveai/glaive-function-calling-v2`](https://huggingface.co/datasets/glaiveai/glaive-function-calling-v2)
+- **Licence:** `apache-2.0` — commercial use permitted.
+- **Generator model:** Synthetic schema generator (Glaive AI).
+- **Decision:** `TSAI reserves`
+- **Our opinion:** use. 113k dialogues teaching exact JSON schema compliance, `<|tool_call|>`, and `<|tool_result|>`.
+
+### `sft-salesforce-xlam-60k` — Salesforce xLAM 60k
+
+- **Stage:** SFT
+- **Set:** `sft-salesforce-xlam-60k`
+- **Language:** Multi-tool / API
+- **Source:** [`Salesforce/xlam-function-calling-60k`](https://huggingface.co/datasets/Salesforce/xlam-function-calling-60k)
+- **Licence:** `cc-by-4.0` — commercial use permitted with attribution.
+- **Generator model:** Salesforce APIGen pipeline (open weights).
+- **Decision:** `TSAI reserves`
+- **Our opinion:** use. Multi-tool agent orchestration dialogues covering edge cases.
+
+### `sft-code-swe-gym-trajectories` — SWE-Gym OpenHands Trajectories
+
+- **Stage:** SFT
+- **Set:** `sft-code-swe-gym-trajectories`
+- **Language:** Code / Python SWE
+- **Source:** [`SWE-Gym/OpenHands-SFT-Trajectories`](https://huggingface.co/datasets/SWE-Gym/OpenHands-SFT-Trajectories)
+- **Licence:** `mit` — commercial use permitted.
+- **Generator model:** OpenHands agent trajectories on open-source repositories.
+- **Decision:** `TSAI reserves`
+- **Our opinion:** use. End-to-end software engineering problem-solving trajectories with bash, git, and diffs.
+
+### `rl-nvidia-helpsteer2` — NVIDIA HelpSteer2 & Preference
+
+- **Stage:** RL (Reward Modeling & DPO)
+- **Set:** `rl-nvidia-helpsteer2`
+- **Language:** English / Multi-domain
+- **Source:** [`nvidia/HelpSteer2`](https://huggingface.co/datasets/nvidia/HelpSteer2)
+- **Licence:** `cc-by-4.0` — commercial use permitted with attribution.
+- **Generator model:** none (human-annotated multi-attribute ratings and preference justifications).
+- **Decision:** `TSAI reserves`
+- **Our opinion:** use. 10k samples scored on Helpfulness, Correctness, Coherence, Complexity, and Verbosity.
+
+### `rl-skywork-reward-80k` — Skywork Reward Preference 80K
+
+- **Stage:** RL (Reward Modeling & DPO)
+- **Set:** `rl-skywork-reward-80k`
+- **Language:** English / Multi-domain
+- **Source:** [`Skywork/Skywork-Reward-Preference-80K-v0.2`](https://huggingface.co/datasets/Skywork/Skywork-Reward-Preference-80K-v0.2)
+- **Licence:** `apache-2.0` — commercial use permitted.
+- **Generator model:** Skywork reward filtering pipeline.
+- **Decision:** `TSAI reserves`
+- **Our opinion:** use. High-precision pairwise preferences for Bradley-Terry reward models.
+
+### `rl-ultrafeedback-clean` — UltraFeedback Binarized Cleaned
+
+- **Stage:** RL (DPO / ORPO)
+- **Set:** `rl-ultrafeedback-clean`
+- **Language:** English / Multi-domain
+- **Source:** [`argilla/ultrafeedback-binarized-preferences-cleaned`](https://huggingface.co/datasets/argilla/ultrafeedback-binarized-preferences-cleaned)
+- **Licence:** `mit` — commercial use permitted.
+- **Generator model:** GPT-4 / Argilla decontaminated pipeline.
+- **Decision:** `TSAI reserves`
+- **Our opinion:** use. Primary alignment engine decontaminated against academic benchmarks.
+
+### `rl-nectar-rm` — Berkeley Nectar
+
+- **Stage:** RL (Reward Modeling)
+- **Set:** `rl-nectar-rm`
+- **Language:** English / Multi-domain
+- **Source:** [`berkeley-nest/Nectar`](https://huggingface.co/datasets/berkeley-nest/Nectar)
+- **Licence:** `apache-2.0` — commercial use permitted.
+- **Generator model:** GPT-4 multi-candidate ranking (7 model answers per prompt).
+- **Decision:** `TSAI reserves`
+- **Our opinion:** use. Fine-grained multi-candidate Bradley-Terry reward scoring.
+
+### `rl-intel-orca-dpo` — Intel Orca DPO Pairs
+
+- **Stage:** RL (DPO)
+- **Set:** `rl-intel-orca-dpo`
+- **Language:** English / Reasoning
+- **Source:** [`Intel/orca_dpo_pairs`](https://huggingface.co/datasets/Intel/orca_dpo_pairs)
+- **Licence:** `apache-2.0` — commercial use permitted.
+- **Generator model:** Intel Labs alignment filter.
+- **Decision:** `TSAI reserves`
+- **Our opinion:** use. Pairs rewarding step-by-step thinking over shallow completions.
+
+### `rl-distilabel-math-dpo` — Distilabel Math DPO
+
+- **Stage:** RL (DPO / Verifier)
+- **Set:** `rl-distilabel-math-dpo`
+- **Language:** English / Mathematics
+- **Source:** [`argilla/distilabel-math-dpo`](https://huggingface.co/datasets/argilla/distilabel-math-dpo)
+- **Licence:** `apache-2.0` — commercial use permitted.
+- **Generator model:** NuminaMath / Argilla mathematical verifier.
+- **Decision:** `TSAI reserves`
+- **Our opinion:** use. Penalizes intermediate calculation bugs and step hallucinations.
+
+### `rl-code-feedback-dpo` — Code-Feedback DPO
+
+- **Stage:** RL (DPO)
+- **Set:** `rl-code-feedback-dpo`
+- **Language:** Code (Polyglot)
+- **Source:** [`HuggingFaceH4/Code-Feedback`](https://huggingface.co/datasets/HuggingFaceH4/Code-Feedback)
+- **Licence:** `apache-2.0` — commercial use permitted.
+- **Generator model:** HF H4 / TRL execution verification pairs.
+- **Decision:** `TSAI reserves`
+- **Our opinion:** use. Software engineering preferences rewarding tested implementations.
+
+### `rl-wildguardmix` — AllenAI WildGuardMix
+
+- **Stage:** RL (Safety Alignment)
+- **Set:** `rl-wildguardmix`
+- **Language:** English / Safety
+- **Source:** [`allenai/wildguardmix`](https://huggingface.co/datasets/allenai/wildguardmix)
+- **Licence:** `odc-by` — commercial use permitted with attribution.
+- **Generator model:** WildGuard adversarial filter (Ai2).
+- **Decision:** `TSAI reserves`
+- **Our opinion:** use. 86k safety and jailbreak interaction pairs calibrating refusal behavior without false refusals.
 
 
 ## Strategy v0
