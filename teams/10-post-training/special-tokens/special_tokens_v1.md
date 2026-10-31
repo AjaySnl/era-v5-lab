@@ -84,3 +84,4 @@ Unassigned slots `003..009`, `017..023`, and `030..255` are mapped to:
 2. **HPLT 3.0 (`ind-hi-hplt` · gmrammohan15)**: Verified clean. Devanagari script joiners `U+200D` (ZWJ) and `U+200C` (ZWNJ) retained as natural script characters.
 3. **IndicCorpV2 (`ind-hi-indiccorp` · Ranjani)**: Verified clean. No ghost tokens found.
 4. **FineWeb-2 Marathi (`ind-mr-fw2` · Amit T)**: Verified clean. Zero ghost tokens. ZWJ/ZWNJ preserved for Marathi orthography (`ऱ्या`, conjuncts).
+5. **FineWeb-2 Kannada (`ind-kn-fw2` · Lokesh Arundathi)**: No new token request or allocation change. Preserve vowel sequences, ZWNJ (`U+200C`) and ZWJ (`U+200D`) as text, including the Unicode RA + ZWJ + virama order and its legacy alternative.

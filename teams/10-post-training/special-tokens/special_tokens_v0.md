@@ -167,10 +167,14 @@ The budget covers the think span and the tool trace. It does not cover the visib
 - **Tool-result markers:** Use the shared `<|tool_result|>` and `<|/tool_result|>` markers, listed at slots `028` and `029` in the reviewed format. No duplicate markers are requested.
 
 
-### 7. Lokesh Arundathi — Dataset section *(placeholder for PR to `g10-week1-post-training`)*
+### 7. Lokesh Arundathi — Kannada (`ind-kn-fw2`)
 
-- **Pack / Language / Source:** *(to be added by Lokesh Arundathi via PR)*
-- **Dataset markers:** *(to be added by Lokesh Arundathi via PR; deduplicated into consolidated list on merge)*
+- **Pack / Language / Source:** `ind-kn-fw2` / Kannada (`kn`) / `HuggingFaceFW/fineweb-2`.
+- **Licence decision:** `TSAI reserves`; see the Kannada licence entry.
+- **Not special tokens:** Kannada letters, dependent vowel signs, virama `U+0CCD`, ZWNJ `U+200C`, ZWJ `U+200D`, punctuation, mixed-script words and `kn` remain ordinary text.
+- **Preservation:** keep supplied sequences unchanged. OnePlus (`ಒನ್‌ಪ್ಲಸ್`) is the verified ZWNJ example. The RA/ZWJ checks cover `0CB0 200D 0CCD 0C95` and legacy `0CB0 0CCD 200D 0C95`; preserve both orders.
+- **Preprocessing:** the Kannada SWE helper removes only `U+200B`/`U+FEFF` before marker checking, without NFKC or script-joiner removal.
+- **New special-token request:** none. Existing chat structure covers everything.
 
 ### 8. gmrammohan15 — Indic web (`ind-hi-hplt` · HPLT 3.0 `hin_Deva`)
 
