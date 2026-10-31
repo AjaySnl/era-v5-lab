@@ -182,13 +182,15 @@ Three stages. Sets marked `excluded` stay in the table with the reason and are n
 - **Licence:** *(TBD via PR)*
 - **Decision:** `TSAI reserves`
 
-### 12. Vikash Ranjan — Stack Exchange / Dataset section *(placeholder for PR to `g10-week1-post-training`)*
+### 12. Vikash Ranjan — Rust (`code-rust` · `bigcode/starcoderdata`)
 
-- **Set:** *(TBD via PR)*
-- **Language:** *(TBD via PR)*
-- **Source:** *(TBD via PR)*
-- **Licence:** *(TBD via PR)*
+- **Set:** `code-rust`
+- **Language:** Rust
+- **Source:** [bigcode/starcoderdata](https://huggingface.co/datasets/bigcode/starcoderdata) — Rust subset (500-document pack); collected GitHub source code, one upstream repository per file.
+- **Licence:** `other` — Hub tag `license:other`, gated (auto-approval). Each file keeps its upstream licence and attribution notice, so the corpus is not uniformly permissive; commercial use must follow per-file terms.
+- **Generator model:** Not applicable at dataset level; no generator model is declared for this collected code corpus.
 - **Decision:** `TSAI reserves`
+- **Reading note:** 500 documents read. Licence signals are per file: 3 copyleft files — `2309a9a7478a52e5` (LGPL-3.0-or-later, SPDX header), `11fffe33baa7bd5e` (AGPL), `c5e98659490161e2` (GPL); 6 files carry an `SPDX-License-Identifier`; 13 mention an MIT licence, 17 Apache and 1 BSD; 36 carry a copyright line and 7 say "all rights reserved"; no non-commercial or personal-use-only file turned up. All 500 documents keep their source URL, so the attribution and takedown ledger can be built per file. Licences must be filtered per file, not per corpus. Raw documents are not committed.
 
 ---
 

@@ -208,7 +208,17 @@ The budget covers the think span and the tool trace. It does not cover the visib
 - **Pack / Language / Source:** *(to be added by Syed Abdul via PR)*
 - **Dataset markers:** *(to be added by Syed Abdul via PR; deduplicated into consolidated list on merge)*
 
-### 12. Vikash Ranjan — Stack Exchange / Dataset section *(placeholder for PR to `g10-week1-post-training`)*
+### 12. Vikash Ranjan — Rust (`code-rust` · `bigcode/starcoderdata`)
 
-- **Pack / Language / Source:** *(to be added by Vikash Ranjan via PR)*
-- **Dataset markers:** *(to be added by Vikash Ranjan via PR; deduplicated into consolidated list on merge)*
+- **Pack / Language / Source:** `code-rust` / Rust / `bigcode/starcoderdata` (Rust subset, 500-document pack)
+- **Licence decision:** `TSAI reserves`; see the Rust licence entry.
+- **Chat & ghost markers found in dataset (`B3`):** none in all 500 documents. Checked by known patterns and by open-ended catalogues, all 0 hits:
+  - known formats: ChatML / Llama-3 style `<|...|>` (also fullwidth `<｜...｜>`), `[INST]` / `[/INST]`, `<<SYS>>`, `<s>` / `</s>`, `<think>`, `<tool_call>`, `<tool_result>`, `<unk>` / `<pad>` / `<mask>` / `<bos>` / `<eos>`, SentencePiece `▁`, and `<|reserved_NNN|>`;
+  - catalogues: line-initial role prefixes (`### Instruction:`, `### Assistant:`, `### Response:`, `User:`, `System:`).
+- **Dataset-specific markers in `bigcode/starcoderdata` (Rust subset) — found; they are values, not structure:** 225 of 500 documents open with a StarCoderData header line: `<reponame>` (75 documents), `<filename>` (105), `<gh_stars>` (97), for example `e016447055203614` and `d1e5237063713aba`. Per the instructor ruling (27 Oct) they are plain text and must not get a token id. Strip them in pre-training cleaning or keep them as plain text, consistently across packs. No notebook markers (`<jupyter_*>`, `<empty_output>`) and no commit or issue markers (`<commit_*>`, `<issue_*>`) occur in this pack.
+- **Redaction placeholders — not tokens:** 18 documents carry the pipeline's PII placeholders — `<NAME>` (13), `<EMAIL>` (9), `<KEY>` (1), `<PASSWORD>` (1). Keep them as plain text; they mark where the anonymizer replaced a value and must not enter the vocabulary.
+- **Not special tokens — Rust syntax:** the turbofish `::<` (121 documents, for example `Vec::<u8>::new()`), generic parameters `<T>` and `<'a>`, comparison operators, and rustdoc HTML tags (`<div>`, `<p>`, `<b>` in 368 documents) are ordinary code text. HTML entities `&lt;` / `&gt;` / `&amp;` (2 documents) are plain text as well. The tokenizer must neither split nor reserve any of them.
+- **Unicode findings:** one document (`2faccaa1d7a77d70`) carries a BOM `U+FEFF` at the start of the code body, immediately after its `<gh_stars>0` header line. No ZWJ, ZWNJ, ZWSP, replacement character (`U+FFFD`) or private-use characters occur anywhere else in the 500 documents. Keep BOM handling in the text-cleaning stage (G4), not in the tokenizer vocabulary.
+- **New special-token request:** none. The shared ChatML `v0` block covers this dataset. The four FIM slots (`010..012`, `016`) already reserved cover agentic Rust edits; no id is added or renumbered.
+- **Tool-result markers:** use the shared `<|tool_result|>` and `<|/tool_result|>` markers at slots `028` and `029`. Rust compiler and `cargo test` output arrives as tool results, so it stays plain text inside those spans. No duplicate markers requested.
+- **Action:** keep `B3` stripping in pre-training cleaning (nothing to strip in this pack); strip or keep the `<reponame>` / `<filename>` / `<gh_stars>` header line consistently; preserve Rust syntax, rustdoc HTML and the redaction placeholders as plain text.
