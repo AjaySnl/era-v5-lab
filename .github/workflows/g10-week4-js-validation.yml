@@ -1,0 +1,305 @@
+name: g10-week4-js-validation
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to validate (from AjaySnl/era-v5-lab)'
+        required: false
+        default: 'g10-week4-js-hardening-ajaysnl'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+
+      # ── 1. Checkout ──────────────────────────────────────────────────────
+      - name: Checkout feature branch
+        uses: actions/checkout@v4
+        with:
+          repository: AjaySnl/era-v5-lab
+          ref: ${{ inputs.branch }}
+          fetch-depth: 1
+
+      # ── 2. Record commit identity ─────────────────────────────────────────
+      # GITHUB_REF and GITHUB_SHA reflect the workflow run's triggering ref
+      # and its tip commit (the branch from which workflow_dispatch was
+      # invoked). git rev-parse HEAD is the actual checked-out feature commit
+      # being tested — these two SHA values will differ when the dispatch ref
+      # and the tested branch diverge.
+      - name: Record branch and commit info
+        env:
+          REQUESTED_BRANCH: ${{ inputs.branch }}
+        run: |
+          echo "Requested branch : ${REQUESTED_BRANCH}"
+          echo "GITHUB_REF       : ${GITHUB_REF}"
+          echo "GITHUB_SHA       : ${GITHUB_SHA}"
+          echo "Checked-out SHA  : $(git rev-parse HEAD)"
+          echo "Commit message   : $(git log --format='%s' -1)"
+
+      # ── 3. Assert exact feature commit SHA ───────────────────────────────
+      - name: Assert exact expected commit SHA
+        run: |
+          ACTUAL=$(git rev-parse HEAD)
+          EXPECTED="52186e24d59105fc8c487aef761ae2d247a18513"
+          if [ "${ACTUAL}" != "${EXPECTED}" ]; then
+            echo "ERROR: SHA mismatch." >&2
+            echo "  Expected : ${EXPECTED}" >&2
+            echo "  Actual   : ${ACTUAL}" >&2
+            echo "This workflow validates only commit ${EXPECTED}." >&2
+            exit 1
+          fi
+          echo "SHA confirmed: ${ACTUAL}"
+
+      # ── 4. Python 3.12 ───────────────────────────────────────────────────
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # ── 5. Node.js 26 (required by _node_ready() in test_js_verifier.py) ─
+      - name: Set up Node.js 26
+        uses: actions/setup-node@v4
+        with:
+          node-version: '26'
+
+      # ── 6. Verify Node major >= 26 ───────────────────────────────────────
+      - name: Verify Node.js major version is 26 or later
+        run: |
+          NODE_VER=$(node --version)
+          MAJOR=$(echo "${NODE_VER}" | sed 's/v//' | cut -d. -f1)
+          echo "Node.js ${NODE_VER} (major=${MAJOR})"
+          if [ "${MAJOR}" -lt 26 ]; then
+            echo "ERROR: Node major=${MAJOR} < 26; @needs_node tests would skip." >&2
+            exit 1
+          fi
+
+      # ── 7. Python dependency ─────────────────────────────────────────────
+      - name: Install pytest
+        run: python -m pip install pytest
+
+      # ── 8. Build JS image (Node 26 Alpine, Worker threads) ───────────────
+      - name: Build g10-js-rl:1
+        run: |
+          docker build \
+            -f teams/10-post-training/rl/js/js.Dockerfile \
+            -t g10-js-rl:1 \
+            teams/10-post-training/rl/js
+
+      # ── 9. Build JSTS image (Node 22 Slim, Jest 29 + Babel) ──────────────
+      - name: Build g10-jsts-rl:1
+        run: |
+          docker build \
+            -f teams/10-post-training/rl/jsts/jsts.Dockerfile \
+            -t g10-jsts-rl:1 \
+            teams/10-post-training/rl/jsts
+
+      # ── 10. Verify both images present ───────────────────────────────────
+      - name: Verify both Docker images are present
+        run: |
+          FORMAT='{{.Id}}'
+          JS_ID=$(docker image inspect g10-js-rl:1   --format "${FORMAT}" | cut -c1-19)
+          JT_ID=$(docker image inspect g10-jsts-rl:1 --format "${FORMAT}" | cut -c1-19)
+          echo "g10-js-rl:1   ${JS_ID}"
+          echo "g10-jsts-rl:1 ${JT_ID}"
+
+      # ── 11. Run pytest (87 collected, 87 passed, 0 skipped expected) ─────
+      - name: Run pytest suite
+        run: |
+          set +e
+          python -m pytest \
+            teams/10-post-training/rl/js/test_js_verifier.py \
+            -v --tb=short -p no:cacheprovider \
+            > pytest_out.txt 2>&1
+          PYTEST_RC=$?
+          cat pytest_out.txt
+          cat > /tmp/validate_pytest.py << 'PYEOF'
+          import re, sys
+          with open('pytest_out.txt') as f:
+              content = f.read()
+          mc = re.search(r'collected (\d+) items?', content)
+          if not mc:
+              print('FAIL: "collected N items" line not found -- pytest may have failed to start', file=sys.stderr)
+              sys.exit(1)
+          collected = int(mc.group(1))
+          if collected == 0:
+              print('FAIL: collected=0 -- all tests deselected or collection error occurred', file=sys.stderr)
+              sys.exit(1)
+          summary_lines = [
+              line for line in content.splitlines()
+              if re.match(r'=+\s+\d+', line) and re.search(r'\d+\s*(passed|failed|error)', line)
+          ]
+          if not summary_lines:
+              print('FAIL: no pytest result summary line found -- the run may have been killed mid-suite', file=sys.stderr)
+              sys.exit(1)
+          if len(summary_lines) > 1:
+              print(f'WARNING: {len(summary_lines)} candidate summary lines found; using the last one', file=sys.stderr)
+          summary_line = summary_lines[-1]
+          if not re.search(r'\d+ passed', summary_line):
+              print('FAIL: summary line reports no passing tests', file=sys.stderr)
+              sys.exit(1)
+          def _n(pat):
+              m2 = re.search(pat, summary_line)
+              return int(m2.group(1)) if m2 else 0
+          passed     = _n(r'(\d+) passed')
+          skipped    = _n(r'(\d+) skipped')
+          failed     = _n(r'(\d+) failed')
+          errors     = _n(r'(\d+) error')
+          xfailed    = _n(r'(\d+) xfailed')
+          xpassed    = _n(r'(\d+) xpassed')
+          deselected = _n(r'(\d+) deselected')
+          print(f'collected={collected} passed={passed} skipped={skipped} failed={failed} errors={errors} xfailed={xfailed} xpassed={xpassed} deselected={deselected}')
+          ok = True
+          if collected != 87:
+              print(f'FAIL: collected={collected}, expected 87', file=sys.stderr)
+              ok = False
+          if passed != 87:
+              print(f'FAIL: passed={passed}, expected 87', file=sys.stderr)
+              ok = False
+          if skipped != 0:
+              print(f'FAIL: skipped={skipped} -- requires Node >=26 on host and g10-js-rl:1 image', file=sys.stderr)
+              ok = False
+          if failed != 0:
+              print(f'FAIL: failed={failed}, expected 0', file=sys.stderr)
+              ok = False
+          if errors != 0:
+              print(f'FAIL: errors={errors}, expected 0', file=sys.stderr)
+              ok = False
+          if xfailed != 0:
+              print(f'FAIL: xfailed={xfailed}, expected 0 (no xfail marks in this test file)', file=sys.stderr)
+              ok = False
+          if xpassed != 0:
+              print(f'FAIL: xpassed={xpassed}, expected 0', file=sys.stderr)
+              ok = False
+          if deselected != 0:
+              print(f'FAIL: deselected={deselected}, expected 0', file=sys.stderr)
+              ok = False
+          accounted = passed + skipped + failed + errors + xfailed + xpassed + deselected
+          if accounted != collected:
+              print(f'FAIL: accounted={accounted} != collected={collected}: summary appears incomplete or partial', file=sys.stderr)
+              ok = False
+          if not ok:
+              sys.exit(1)
+          print('PASS: 87 collected, 87 passed, 0 skipped')
+          PYEOF
+          python /tmp/validate_pytest.py
+          PARSE_RC=$?
+          if [ "$PYTEST_RC" -ne 0 ] || [ "$PARSE_RC" -ne 0 ]; then
+            exit 1
+          fi
+        shell: bash
+
+      # ── 12. Run reward acceptance (10 jobs → 11 JSON lines expected) ─────
+      - name: Run reward acceptance check
+        run: |
+          set +e
+          python -m rl.reward --check-all --type js \
+            > reward_out.txt 2>reward_err.txt
+          REWARD_RC=$?
+          echo "--- reward stdout (11 JSON lines expected) ---"
+          cat reward_out.txt
+          echo "--- reward stderr ---"
+          cat reward_err.txt
+          cat > /tmp/validate_reward.py << 'PYEOF'
+          import json, math, sys
+          EXPECTED_ENVS = {
+              "js/camel_to_snake",
+              "js/bank-account",
+              "js/binary",
+              "js/matrix",
+              "js/robot-simulator",
+          }
+          EXPECTED_KINDS = {"good", "bad"}
+          JOB_FIELDS = {"env_id", "kind", "score", "ok", "reason", "seconds"}
+          SUMMARY_FIELDS = {"checked", "wrong"}
+          with open('reward_out.txt') as f:
+              lines = [l.strip() for l in f if l.strip()]
+          if len(lines) != 11:
+              print(f'FAIL: expected 11 JSON lines (10 job results + 1 summary), got {len(lines)}', file=sys.stderr)
+              sys.exit(1)
+          records = []
+          for i, line in enumerate(lines):
+              try:
+                  obj = json.loads(line)
+              except json.JSONDecodeError as e:
+                  print(f'FAIL: line {i+1} is not valid JSON: {e}', file=sys.stderr)
+                  print(f'  Content: {line!r}', file=sys.stderr)
+                  sys.exit(1)
+              if not isinstance(obj, dict):
+                  print(f'FAIL: line {i+1} is not a JSON object: {type(obj).__name__}', file=sys.stderr)
+                  sys.exit(1)
+              records.append(obj)
+          for i, r in enumerate(records[:10]):
+              missing = JOB_FIELDS - r.keys()
+              if missing:
+                  print(f'FAIL: job record {i+1} missing fields: {missing}', file=sys.stderr)
+                  sys.exit(1)
+              if r['env_id'] not in EXPECTED_ENVS:
+                  print(f'FAIL: job record {i+1} unexpected env_id={r["env_id"]!r}', file=sys.stderr)
+                  sys.exit(1)
+              if r['kind'] not in EXPECTED_KINDS:
+                  print(f'FAIL: job record {i+1} unexpected kind={r["kind"]!r}', file=sys.stderr)
+                  sys.exit(1)
+              if not isinstance(r['ok'], bool):
+                  print(f'FAIL: job record {i+1} ok is not a boolean: {r["ok"]!r}', file=sys.stderr)
+                  sys.exit(1)
+              if r['ok'] is not True:
+                  print(f'FAIL: job record {i+1} ok=false env_id={r["env_id"]} kind={r["kind"]}', file=sys.stderr)
+                  sys.exit(1)
+              score = r['score']
+              if isinstance(score, bool) or not isinstance(score, (int, float)):
+                  print(f'FAIL: job record {i+1} score is not numeric: {score!r}', file=sys.stderr)
+                  sys.exit(1)
+              if not math.isfinite(score):
+                  print(f'FAIL: job record {i+1} score is not finite: {score!r}', file=sys.stderr)
+                  sys.exit(1)
+              expected_score = 1.0 if r['kind'] == 'good' else 0.0
+              if score != expected_score:
+                  print(f'FAIL: job record {i+1} env_id={r["env_id"]} kind={r["kind"]} score={score}, expected {expected_score}', file=sys.stderr)
+                  sys.exit(1)
+              seconds = r['seconds']
+              if isinstance(seconds, bool) or not isinstance(seconds, (int, float)):
+                  print(f'FAIL: job record {i+1} seconds is not numeric: {seconds!r}', file=sys.stderr)
+                  sys.exit(1)
+              if not math.isfinite(seconds):
+                  print(f'FAIL: job record {i+1} seconds is not finite: {seconds!r}', file=sys.stderr)
+                  sys.exit(1)
+              if seconds < 0:
+                  print(f'FAIL: job record {i+1} seconds is negative: {seconds!r}', file=sys.stderr)
+                  sys.exit(1)
+          seen = {(r['env_id'], r['kind']) for r in records[:10]}
+          expected_pairs = {(e, k) for e in EXPECTED_ENVS for k in EXPECTED_KINDS}
+          missing_pairs = expected_pairs - seen
+          if missing_pairs:
+              print(f'FAIL: missing (env_id, kind) pairs: {sorted(missing_pairs)}', file=sys.stderr)
+              sys.exit(1)
+          summary = records[-1]
+          missing = SUMMARY_FIELDS - summary.keys()
+          if missing:
+              print(f'FAIL: summary record missing fields: {missing}', file=sys.stderr)
+              sys.exit(1)
+          checked, wrong = summary['checked'], summary['wrong']
+          if isinstance(checked, bool) or not isinstance(checked, int):
+              print(f'FAIL: summary "checked" is not an integer: {checked!r}', file=sys.stderr)
+              sys.exit(1)
+          if isinstance(wrong, bool) or not isinstance(wrong, int):
+              print(f'FAIL: summary "wrong" is not an integer: {wrong!r}', file=sys.stderr)
+              sys.exit(1)
+          if checked != 10:
+              print(f'FAIL: checked={checked}, expected exactly 10', file=sys.stderr)
+              sys.exit(1)
+          if wrong != 0:
+              print(f'FAIL: wrong={wrong}, expected 0', file=sys.stderr)
+              sys.exit(1)
+          print(f'PASS: checked={checked}, wrong={wrong}, all 5 environments covered with good+bad records')
+          PYEOF
+          python /tmp/validate_reward.py
+          PARSE_RC=$?
+          if [ "$REWARD_RC" -ne 0 ] || [ "$PARSE_RC" -ne 0 ]; then
+            exit 1
+          fi
+        shell: bash
+        working-directory: teams/10-post-training
